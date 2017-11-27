@@ -1,0 +1,26 @@
+*&---------------------------------------------------------------------*
+*&  Include           ZEDR22_35_S01
+*&---------------------------------------------------------------------*
+SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE TEXT-001.
+
+PARAMETERS: pa_fpath TYPE string .
+
+SELECTION-SCREEN SKIP 1.
+
+SELECTION-SCREEN BEGIN OF BLOCK b2 WITH FRAME TITLE TEXT-002.
+PARAMETERS : pa_mode  LIKE ctu_params-dismode
+                           OBLIGATORY DEFAULT 'N',
+             p_update LIKE ctu_params-updmode OBLIGATORY DEFAULT 'S'.
+SELECTION-SCREEN END OF BLOCK b2.
+
+SELECTION-SCREEN END OF BLOCK b1 .
+
+SELECTION-SCREEN BEGIN OF BLOCK b3 WITH FRAME TITLE TEXT-003.
+
+SELECTION-SCREEN PUSHBUTTON 1(18) TEXT-t04 USER-COMMAND push.
+SELECTION-SCREEN SKIP 1.
+
+SELECTION-SCREEN END OF BLOCK b3.
+
+----------------------------------------------------------------------------------
+Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750

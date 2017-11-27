@@ -1,0 +1,118 @@
+*&---------------------------------------------------------------------*
+*& Include ZEDR22_35_TOP                                     Report ZEDR22_35
+*&
+*&---------------------------------------------------------------------*
+REPORT zedr22_35 MESSAGE-ID zppm1 NO STANDARD PAGE HEADING.
+
+TABLES: sscrfields.
+*&====================================================================&*
+*&  CONSTANTS                                                         &*
+*&====================================================================&*
+CONSTANTS : gc_pf_status_set TYPE slis_alv_event-name VALUE 'PF_STATUS_SET',
+            gc_top_of_page   TYPE slis_formname VALUE 'TOP_OF_PAGE'.
+
+*&====================================================================&*
+*&  Global Variable                                                         &*
+*&====================================================================&*
+DATA :1_pos   TYPE i VALUE 0,
+      gv_file TYPE rlgrap-filename.
+
+DATA: BEGIN OF g_fbdcdata OCCURS 0.
+    INCLUDE STRUCTURE bdcdata.
+DATA: END OF g_fbdcdata.
+
+DATA: gt_msg LIKE TABLE OF bdcmsgcoll WITH HEADER LINE.
+
+DATA: BEGIN OF gt_emsg OCCURS 0,
+        msgtyp    LIKE sy-msgty,
+        msgnum(3),
+        file(150),
+      END OF gt_emsg.
+
+DATA: BEGIN OF gs_excel,
+        matnr(018),                  " 자재
+        temp1(040),                  " 품명
+        werks(004),                  " 플랜트
+        stlan(001),                  " 원단위 용도
+        stlal(002),                  " 대체 원단위 번호
+        bodat(008),                  " BOM 생성일자
+        bmeng(018),                  " 기준수량
+        zeins(003),                  " 단위
+        temp2(040),                  " 대체 텍스트
+        stuts(004),                  " 상태
+        posnr(004),                  " 품목번호
+        postp(001),                  " 품목 범주
+        idnrk(018),                  " 자품목코드
+        menge(017),                  " 소요 수량
+        meins(003),                  " 단위
+        ausch(010),                  " 구성부품 스크랩
+        itsob(002),                  " 특별조달
+        sanka(001),                  " 원가지시자
+        beikz(001),                  " 자재공급 지시자
+        potx1(040),                                         " 품목 텍스트1
+        potx2(040),                                         " 품목 텍스트2
+      END OF gs_excel.
+
+DATA: gt_excel LIKE gs_excel OCCURS 0.
+
+DATA : BEGIN OF gs_result,
+         matnr(018),                  " 자재
+         temp1(040),                  " 품명
+         werks(004),                  " 플랜트
+         stlan(001),                  " 원단위 용도
+         stlal(002),                  " 대체 원단위 번호
+         bodat(008),                  " BOM 생성일자
+         bmeng(018),                  " 수량
+         zeins(003),                  " 단위
+         temp2(040),                  " 대체 텍스트
+         stuts(004),                  " 상태
+         posnr(004),                  " 품목번호
+         postp(001),                  " 품목 범주
+         idnrk(018),                  " 구성 부품 도번
+         menge(017),                  " 소요 수량
+         meins(003),                  " 단위
+         ausch(010),                  " 구성부품 스크랩
+         itsob(002),                  " 특별조달
+         sanka(001),                  " 원가지시자
+         beikz(001),                  " 자재공급 지시자
+         potx1(040),                                         " 품목 텍스트1
+         potx2(040).                                         " 품목 텍스트2
+
+DATA : mark    TYPE char01,
+       flag    TYPE char01,
+       text    TYPE kvmsgtx,
+       icon    LIKE icon-id,
+       celltab TYPE lvc_t_styl,
+       colinfo TYPE lvc_t_scol.      "ALV COLUMN COLOR
+
+DATA : END OF gs_result,
+gt_result LIKE gs_result OCCURS 0.
+
+DATA : c_green  LIKE icons-l4 VALUE '@08@', "녹색
+       c_yellow LIKE icons-l4 VALUE '@09@',  "노란색
+       c_red    LIKE icons-l4 VALUE '@0A@'.  "붉은색
+
+DATA : g_tcnt TYPE char10, "Total count
+       g_pcnt TYPE char10,  "Process count
+       g_ecnt TYPE char10,  "Error count
+       g_scnt TYPE char10,  "Success count
+       g_cnt  TYPE char10,
+       g_err  TYPE char01.
+
+DATA : gv_handle LIKE disvariant-handle,
+       gt_coltab TYPE lvc_t_scol.
+
+DATA : g_matnr(018),
+       g_werks(004),
+       g_stlal(002),
+       g_maktx(040),
+       g_exist      TYPE c,
+       g_check(1)   TYPE c VALUE 'X',
+       g_count      LIKE sy-index,
+       gv_message   LIKE bapireturn-message.
+
+DATA : gs_text TYPE textpool,
+       gt_text TYPE STANDARD TABLE OF textpool.
+
+----------------------------------------------------------------------------------
+Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750

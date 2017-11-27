@@ -1,0 +1,42 @@
+*&---------------------------------------------------------------------*
+*& Report  ZEDR22_35
+*&
+*&---------------------------------------------------------------------*
+*&
+*&
+*&---------------------------------------------------------------------*
+
+INCLUDE zedr22_35_top                           .    " global Data
+
+INCLUDE zedr22_35_common                        .
+INCLUDE zedr22_35_s01                           .  " select screen
+INCLUDE zedr22_35_f01                           .  " FORM-Routines
+
+
+AT SELECTION-SCREEN.
+  IF sscrfields-ucomm = 'PUSH'.
+    PERFORM excel_download.
+  ENDIF.
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR pa_fpath.
+  PERFORM get_file_path CHANGING pa_fpath.
+
+START-OF-SELECTION.
+
+  PERFORM input_check_1.
+  PERFORM excel_upload_init.
+  PERFORM excel_data_check.
+  PERFORM excel_data_init.
+
+END-OF-SELECTION.
+
+
+*Messages
+*----------------------------------------------------------
+*
+* Message class: ZPPM1
+*000
+*001
+
+----------------------------------------------------------------------------------
+Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750
