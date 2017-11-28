@@ -1,0 +1,169 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZEDR22_14_F01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZEDR22_14_F01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZEDR22_14_F01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&  Include           ZEDR22_14_F01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  GET_DATA</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*  --&gt;  p1        text</font>
+<font color ="#0000FF">*  &lt;--  p2        text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+FORM get_data .
+  CLEAR : gt_data, gt_data[].
+
+  SELECT carrid carrname currcode url
+    INTO CORRESPONDING FIELDS OF TABLE gt_data
+    FROM scarr
+    WHERE carrid IN s_carrid.
+
+  IF sy-subrc NE 0.
+    MESSAGE s000 WITH 'DATA NOT FOUND'.
+    LEAVE LIST-PROCESSING.
+  ENDIF.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  SET_FCAT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*      --&gt;P_0065   text</font>
+<font color ="#0000FF">*      --&gt;P_0066   text</font>
+<font color ="#0000FF">*      --&gt;P_0067   text</font>
+<font color ="#0000FF">*      --&gt;P_0068   text</font>
+<font color ="#0000FF">*      --&gt;P_0069   text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+FORM set_fcat  USING p_key p_field p_text p_ref_table p_ref_field.
+  gs_fcat-key = p_key.
+  gs_fcat-fieldname = p_field.
+  gs_fcat-coltext = p_text.
+  gs_fcat-ref_table = p_ref_table.
+  gs_fcat-ref_field = p_ref_field.
+
+  CASE p_field.
+    WHEN 'CARRID'.
+      gs_fcat-hotspot = 'X'.
+  ENDCASE.
+
+  APPEND gs_fcat TO gt_fcat.
+  CLEAR  gs_fcat.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  HOTSPOT_HANDLE</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*      --&gt;P_E_ROW_ID  text</font>
+<font color ="#0000FF">*      --&gt;P_E_COLUMN_ID  text</font>
+<font color ="#0000FF">*      --&gt;P_ES_ROW_NO  text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+FORM hotspot_handle  USING    p_row_id   STRUCTURE lvc_s_row
+                              p_column_id STRUCTURE lvc_s_col
+                              ps_row_no   STRUCTURE lvc_s_roid.
+  DATA : LV_CODE,
+        LV_MSG(100).
+
+
+  READ TABLE gt_data INDEX p_row_id-index.
+
+  IF sy-subrc EQ 0.
+    CLEAR : gt_sflight, gt_sflight[].
+
+<font color ="#0000FF">*    SELECT carrid connid fldate price currency planetype</font>
+<font color ="#0000FF">*      INTO CORRESPONDING FIELDS OF TABLE gt_sflight</font>
+<font color ="#0000FF">*      FROM sflight</font>
+<font color ="#0000FF">*      WHERE carrid = gt_data-carrid.</font>
+CALL FUNCTION 'ZED22_GET_SFLIGHT'
+          EXPORTING
+            I_CARRID = GT_DATA-CARRID
+            IMPORTING
+              E_CODE = LV_CODE
+              E_MESSAGE = LV_MSG
+              TABLES
+                T_LIST = GT_SFLIGHT[].
+
+
+    IF lv_code eq 'E'.
+      MESSAGE s000 WITH LV_MSG DISPLAY LIKE 'E'.
+      EXIT.
+    ENDIF.
+
+    CALL SCREEN '0101' STARTING AT 20 3 ."ENDING AT 150 150.
+  ENDIF.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  REFRESH_GRID</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*  --&gt;  p1        text</font>
+<font color ="#0000FF">*  &lt;--  p2        text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+FORM refresh_grid .
+  gs_stable-row = 'X'.
+  gs_stable-col = 'X'.
+
+  CALL METHOD go_grid-&gt;refresh_table_display
+    EXPORTING
+      is_stable      = gs_stable
+      i_soft_refresh = space.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  SET_FCAT_POP</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*      --&gt;P_0208   text</font>
+<font color ="#0000FF">*      --&gt;P_0209   text</font>
+<font color ="#0000FF">*      --&gt;P_0210   text</font>
+<font color ="#0000FF">*      --&gt;P_0211   text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+FORM set_fcat_pop  USING    p_key p_field p_text p_ref_table.
+
+  gs_fcat_pop-key       = p_key.
+  gs_fcat_pop-fieldname = p_field.
+  gs_fcat_pop-coltext   = p_text.
+  gs_fcat_pop-ref_table = p_ref_table.
+
+  CASE p_field.
+    WHEN 'PRICE'.
+      gs_fcat_pop-cfieldname = 'CURRENCY'.
+  ENDCASE.
+
+  APPEND gs_fcat_pop TO gt_fcat_pop.
+  CLEAR  gs_fcat_pop.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  EXCLUDE_TOOLBAR</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*  --&gt;  p1        text</font>
+<font color ="#0000FF">*  &lt;--  p2        text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+FORM exclude_toolbar .
+  gs_toolbar = cl_gui_alv_grid=&gt;mc_fc_excl_all.
+
+  APPEND gs_toolbar TO gt_toolbar.
+  CLEAR gs_toolbar.
+ENDFORM.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750
+</font>
+</body>
+</html>
