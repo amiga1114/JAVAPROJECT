@@ -1,0 +1,24 @@
+*&---------------------------------------------------------------------*
+*& Include ZEDR22_20_TOP                                     Report ZEDR22_20
+*&
+*&---------------------------------------------------------------------*
+REPORT ZEDR22_20 MESSAGE-ID OO.
+
+TABLES : ztedu22_01.
+
+DATA : GT_DATA TYPE TABLE OF ZTEDU22_01 WITH HEADER LINE.
+
+DATA : GV_OKCODE LIKE SY-UCOMM.
+
+DATA : GO_CONTAINER TYPE REF TO CL_GUI_DOCKING_CONTAINER,
+       GO_GRID      TYPE REF TO CL_GUI_ALV_GRID,
+       GS_FCAT      TYPE LVC_S_FCAT,
+       GT_FCAT      TYPE LVC_T_FCAT,
+       GS_LAYOUT    TYPE LVC_S_LAYO,
+       GS_STABLE    TYPE LVC_S_STBL,
+       GS_ROW       TYPE LVC_S_ROW,
+       GT_ROW       TYPE LVC_T_ROW,
+       GS_VARIANT   TYPE DISVARIANT.
+
+----------------------------------------------------------------------------------
+Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750
