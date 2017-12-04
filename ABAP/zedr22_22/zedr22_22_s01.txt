@@ -1,0 +1,11 @@
+*&---------------------------------------------------------------------*
+*&  Include           ZEDR22_22_S01
+*&---------------------------------------------------------------------*
+
+
+SELECTION-SCREEN BEGIN OF BLOCK BL1 WITH FRAME TITLE TEXT-T01.
+SELECT-OPTIONS : S_BUKRS FOR ztedu_22_02-BUKRS.
+SELECTION-SCREEN END OF BLOCK BL1.
+
+----------------------------------------------------------------------------------
+Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750
