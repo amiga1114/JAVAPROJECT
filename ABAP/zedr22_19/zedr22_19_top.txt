@@ -1,0 +1,34 @@
+*&---------------------------------------------------------------------*
+*& Include ZEDR22_19_TOP                                     Report ZEDR22_19
+*&
+*&---------------------------------------------------------------------*
+REPORT ZEDR22_19 MESSAGE-ID oo.
+
+TABLES : qmat.
+
+DATA : gv_okcode LIKE sy-ucomm.
+
+
+DATA : BEGIN OF GT_DATA OCCURS 0,
+       ART        LIKE QMAT-ART,
+       MATNR      LIKE QMAT-MATNR,
+       WERKS      LIKE QMAT-WERKS,
+       KURZTEXT   LIKE TQ30T-KURZTEXT,
+       MAKTX      LIKE MAKT-MAKTX,
+       WERKS_DESC LIKE T001W-NAME1,
+       SPROZ      LIKE QMAT-SPROZ,
+       QKZVERF    LIKE QMAT-QKZVERF,
+       END OF GT_DATA.
+
+DATA : go_container TYPE REF TO cl_gui_docking_container,
+       go_grid      TYPE REF TO cl_gui_alv_grid,
+*       go_handler   TYPE REF TO lcl_event_handler,
+       go_matdoc    TYPE REF TO zcl00_mseg,
+       gs_fcat      TYPE lvc_s_fcat,
+       gt_fcat      TYPE lvc_t_fcat,
+       gs_layout    TYPE lvc_s_layo,
+       gs_stable    TYPE lvc_s_stbl,
+       gs_variant   TYPE disvariant.
+
+----------------------------------------------------------------------------------
+Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750

@@ -1,0 +1,10 @@
+*&---------------------------------------------------------------------*
+*&  Include           ZEDR22_19_S01
+*&---------------------------------------------------------------------*
+SELECTION-SCREEN : BEGIN OF BLOCK BL1 WITH FRAME TITLE TEXT-T01.
+ PARAMETERS : P_ART LIKE qmat-art OBLIGATORY.
+ SELECT-OPTIONS : s_matnr for qmat-matnr.
+SELECTION-SCREEN : END OF BLOCK BL1.
+
+----------------------------------------------------------------------------------
+Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750
