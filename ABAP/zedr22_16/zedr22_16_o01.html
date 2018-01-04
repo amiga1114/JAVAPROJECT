@@ -1,0 +1,150 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZEDR22_16_O01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZEDR22_16_O01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZEDR22_16_O01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&  Include           ZEDR22_16_O01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  STATUS_0100  OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+MODULE status_0100 OUTPUT.
+  SET PF-STATUS '0100'.
+  SET TITLEBAR '0100'.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  DISPLAY_SCREEN  OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+MODULE display_screen OUTPUT.
+  IF go_container IS NOT BOUND.
+    CREATE OBJECT go_container
+      EXPORTING
+        side      = go_container-&gt;dock_at_left
+        extension = 2000.
+
+    CREATE OBJECT go_grid
+      EXPORTING
+        i_parent = go_container.
+
+    IF go_handler IS NOT BOUND.
+      CREATE OBJECT go_handler.
+    ENDIF.
+
+    SET HANDLER : go_handler-&gt;double_click    FOR go_grid,
+                  go_handler-&gt;hotspot_handler FOR go_grid.
+
+    CALL METHOD go_grid-&gt;set_table_for_first_display
+      EXPORTING
+        is_variant      = gs_variant
+        i_save          = 'X'
+        i_default       = 'X'
+        is_layout       = gs_layout
+      CHANGING
+        it_outtab       = gt_data[]
+        it_fieldcatalog = gt_fcat.
+
+  ELSE.
+    PERFORM refresh_grid.
+  ENDIF.
+
+
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  SET_FILED  OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+MODULE set_filed OUTPUT.
+  CLEAR : gt_fcat, gs_fcat.
+
+  PERFORM set_fcat USING : 'X' 'MATNR'      '자재코드'      'MARA'  'MATNR',
+                           'X' 'WERKS'      '플랜트'        'MARC'  'WERKS',
+                           ' ' 'WERKS_NAME' '플랜트 명'     'T001W' 'NAME1',
+                           ' ' 'MAKTX'      '자재내역'      'MAKT'  'MAKTX',
+                           ' ' 'MTART'      '자재유형'      'MARA'  'MTART',
+                           ' ' 'MTART_DESC' '자재유형 내역' 'T134T' 'MTBEZ',
+                           ' ' 'MATKL'      '자재그룹'      'MARA'  'MATKL',
+                           ' ' 'MATKL_DESC' '자재그룹 내역' 'T023T' 'WGBEZ',
+                           ' ' 'PSTAT'      '유지보수 상태' 'MARC'  'PSTAT',
+                           ' ' 'EKGRP'      '구매그룹'      'MARC'  'EKGRP',
+                           ' ' 'SPART'      'Division'      'MARA'  'SPART'.
+
+
+  gs_layout-zebra      = 'X'.
+  gs_layout-sel_mode   = 'D'.
+  gs_layout-cwidth_opt = 'X'.
+<font color ="#0000FF">*  gs_layout-info_fname = 'COLOR'.</font>
+
+  gs_variant-report = sy-repid.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  STATUS_0101  OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+MODULE status_0101 OUTPUT.
+  SET PF-STATUS '0101'.
+  SET TITLEBAR '0101'.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  DISPLAY_POPUP  OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+MODULE display_popup OUTPUT.
+  IF go_container_pop IS NOT BOUND.
+    CREATE OBJECT go_container_pop
+      EXPORTING
+        container_name = 'GO_CONTAINER_POP'.
+
+    CREATE OBJECT go_grid_pop
+      EXPORTING
+        i_parent = go_container_pop.
+
+    CLEAR : gs_toolbar, gt_toolbar.
+    PERFORM exclude_toolbar.
+
+    CALL METHOD go_grid_pop-&gt;set_table_for_first_display
+      EXPORTING
+        i_default            = 'X'
+        is_layout            = gs_layout_pop
+        it_toolbar_excluding = gt_toolbar
+      CHANGING
+        it_outtab            = gt_DATA1[]
+        it_fieldcatalog      = gt_fcat_pop.
+  ENDIF.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  SET_FILED_POP  OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+MODULE set_filed_pop OUTPUT.
+  CLEAR : gs_fcat_pop, gt_fcat_pop.
+  PERFORM set_fcat_pop USING : 'X'  'MATNR'      '자재코드'      'MARD'   'MATNR',
+                               ' '  'MAKTX'      '자재내역'      'MAKT'   'MAKTX',
+                               ' '  'LGORT'      '저장위치'      'MARD'   'LGORT',
+                               ' '  'LGOBE'      '저장위치 내역' 'T001L'  'LGOBE',
+                               ' '  'SPART'      'DIVISION'      'MARA'   'SPART'.
+
+  gs_layout_pop-zebra      = 'X'.
+  gs_layout_pop-sel_mode   = 'D'.
+  gs_layout_pop-cwidth_opt = 'X'.
+ENDMODULE.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750
+</font>
+</body>
+</html>

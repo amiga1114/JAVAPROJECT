@@ -1,0 +1,47 @@
+*&---------------------------------------------------------------------*
+*& Report  ZEDR22_16
+*&
+*&---------------------------------------------------------------------*
+*&
+*&
+*&---------------------------------------------------------------------*
+
+INCLUDE ZEDR22_16_TOP                           .    " global Data
+
+ INCLUDE ZEDR22_16_CLS                           .  " LOCAL CLASS
+ INCLUDE ZEDR22_16_S01                           .  " SELECTION SCREEN
+ INCLUDE ZEDR22_16_O01                           .  " PBO-Modules
+ INCLUDE ZEDR22_16_I01                           .  " PAI-Modules
+ INCLUDE ZEDR22_16_F01                           .  " FORM-Routines
+
+ START-OF-SELECTION.
+
+ PERFORM GET_DATA.
+
+ CALL SCREEN '0100'.
+
+*GUI Texts
+*----------------------------------------------------------
+* 0100 --> 자재코드 조회
+* 0101 --> 자재코드 조회
+
+*Text elements
+*----------------------------------------------------------
+* T01 검색조건
+
+
+*Selection texts
+*----------------------------------------------------------
+* P_MTART D       .
+* S_MATNR D       .
+* S_WERKS D       .
+
+
+*Messages
+*----------------------------------------------------------
+*
+* Message class: OO
+*000   & & & &
+
+----------------------------------------------------------------------------------
+Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750

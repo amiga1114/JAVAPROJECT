@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZEDR22_16_TOP</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZEDR22_16_TOP</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZEDR22_16_TOP</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include ZEDR22_16_TOP                                     Report ZEDR22_16</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT zedr22_16 MESSAGE-ID oo.
+
+TABLES : mara,marc.
+
+CLASS lcl_event_handler DEFINITION DEFERRED.
+
+DATA : BEGIN OF gt_data OCCURS 0,
+         matnr      LIKE mara-matnr,
+         werks      LIKE marc-werks,
+         werks_name LIKE t001w-name1,
+         maktx      LIKE makt-maktx,
+         mtart      LIKE mara-mtart,
+         mtart_desc LIKE t134t-mtbez,
+         matkl      LIKE mara-matkl,
+         matkl_desc LIKE t023t-wgbez,
+         pstat      LIKE marc-pstat,
+         ekgrp      LIKE marc-ekgrp,
+         spart      LIKE mara-spart,
+       END OF gt_data.
+
+DATA :BEGIN OF gt_data1 OCCURS 0,
+        matnr LIKE mard-matnr,
+        maktx LIKE makt-maktx,
+        lgort LIKE mard-lgort,
+        lgobe LIKE t001l-lgobe,
+        SPART LIKE MARA-SPART,
+      END OF gt_data1.
+
+
+DATA : gv_okcode LIKE sy-ucomm.
+
+DATA : go_container TYPE REF TO cl_gui_docking_container,
+       go_grid      TYPE REF TO cl_gui_alv_grid,
+       go_handler   TYPE REF TO lcl_event_handler,
+       gs_fcat      TYPE lvc_s_fcat,
+       gt_fcat      TYPE lvc_t_fcat,
+       gs_layout    TYPE lvc_s_layo,
+       gs_stable    TYPE lvc_s_stbl,
+       gs_variant   TYPE disvariant.
+
+<font color ="#0000FF">* Popup Component</font>
+DATA : go_container_pop TYPE REF TO cl_gui_custom_container,
+       go_grid_pop      TYPE REF TO cl_gui_alv_grid,
+       gs_fcat_pop      TYPE lvc_s_fcat,
+       gt_fcat_pop      TYPE lvc_t_fcat,
+       gs_toolbar       TYPE ui_func,
+       gt_toolbar       TYPE ui_functions,
+       gs_layout_pop    TYPE lvc_s_layo.
+
+
+
+<font color ="#0000FF">*SUBMIT ZEDR22_16 VIA SELECTION-SCREEN</font>
+<font color ="#0000FF">*WITH S_CARRID IN S_CARRID</font>
+<font color ="#0000FF">*WITH P_CONNID EQ P_CONNID.</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750
+</font>
+</body>
+</html>
