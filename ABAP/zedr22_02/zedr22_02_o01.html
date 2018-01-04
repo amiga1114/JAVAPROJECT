@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZEDR22_02_O01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZEDR22_02_O01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZEDR22_02_O01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&  Include           ZEDR22_02_O01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  STATUS_0100  OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+MODULE status_0100 OUTPUT.
+  SET PF-STATUS '0100'.
+  SET TITLEBAR '0100'.
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  DISPLAY_SCREEN  OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+MODULE display_screen OUTPUT.
+  CREATE OBJECT go_container
+    EXPORTING
+      container_name = 'GO_CONTAINER'.
+
+  CREATE OBJECT go_grid
+    EXPORTING
+      i_parent = go_container.
+
+  CALL METHOD go_grid-&gt;set_table_for_first_display
+    EXPORTING
+<font color ="#0000FF">*     i_buffer_active =</font>
+<font color ="#0000FF">*     i_bypassing_buffer            =</font>
+<font color ="#0000FF">*     i_consistency_check           =</font>
+<font color ="#0000FF">*     i_structure_name = 'SFLIGHT'</font>
+      is_variant      = gs_variant
+      i_save          = 'X'
+<font color ="#0000FF">*     i_default       = 'X'</font>
+      is_layout       = gs_layout
+<font color ="#0000FF">*     is_print        =</font>
+<font color ="#0000FF">*     it_special_groups             =</font>
+<font color ="#0000FF">*     it_toolbar_excluding          =</font>
+<font color ="#0000FF">*     it_hyperlink    =</font>
+<font color ="#0000FF">*     it_alv_graphics =</font>
+<font color ="#0000FF">*     it_except_qinfo =</font>
+<font color ="#0000FF">*     ir_salv_adapter =</font>
+    CHANGING
+      it_outtab       = gt_sflight[]
+      it_fieldcatalog = gt_fcat
+<font color ="#0000FF">*     it_sort         =</font>
+<font color ="#0000FF">*     it_filter       =</font>
+<font color ="#0000FF">*    EXCEPTIONS</font>
+<font color ="#0000FF">*     invalid_parameter_combination = 1</font>
+<font color ="#0000FF">*     program_error   = 2</font>
+<font color ="#0000FF">*     too_many_lines  = 3</font>
+<font color ="#0000FF">*     others          = 4</font>
+    .
+  IF sy-subrc &lt;&gt; 0.
+<font color ="#0000FF">*   Implement suitable error handling here</font>
+  ENDIF.
+
+
+ENDMODULE.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Module  SET_FIELD  OUTPUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+MODULE set_field OUTPUT.
+
+  CLEAR : gs_fcat, gs_fcat.
+  PERFORM set_fcat USING : 'X' 'CARRID'      'AIRLINE'             'SFLIGHT'  'CARRID',
+                           'X' 'CONNID'      'FLIGHT NUMBER'       'SFLIGHT'  'CONNID',
+                           'X' 'FLDATE'      'DATE'                'SFLIGHT'  'FLDATE',
+                           ' ' 'PRICE'       'AIRFARE'             'SFLIGHT'  'PRICE',
+                           ' ' 'CURRENCY'    'AIRLINE CURRENCY'    'SFLIGHT'  'CURRENCY',
+                           ' ' 'PLANETYPE'   'PLANE TYPE'          'SFLIGHT'  'PLANETYPE',
+                           ' ' 'SEATSMAX'    'Max. capacity econ.' 'SFLIGHT'  'SEATSMAX',
+                           ' ' 'SEATSOCC'    'Occupied econ.'      'SFLIGHT'  'SEATSOCC',
+                           ' ' 'PAYMENTSUM'  'Total'               'SFLIGHT'  'PAYMENTSUM',
+                           ' ' 'SEATSMAX_B'  'Max. capacity bus.'  'SFLIGHT'  'SEATSMAX_B',
+                           ' ' 'SEATSOCC_B'  'Occupied bus.'       'SFLIGHT'  'SEATSOCC_B',
+                           ' ' 'SEATSMAX_F'  'Max. capacity 1st'   'SFLIGHT'  'SEATSMAX_F',
+                           ' ' 'SEATSMAX_F'  'Occupied 1st'        'SFLIGHT'  'SEATSMAX_F'.
+
+
+  gs_layout-zebra      = 'X'.
+  gs_layout-grid_title = 'SFLIGHT LIST'.
+  gs_layout-smalltitle = 'X'.
+  gs_layout-sel_mode   = 'D'.
+  gs_layout-cwidth_opt = 'x'.
+<font color ="#0000FF">*  gs_layout-no_rowmark = 'X'.</font>
+
+  gs_variant-report = sy-repid.
+ENDMODULE.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750
+</font>
+</body>
+</html>

@@ -1,0 +1,138 @@
+*&---------------------------------------------------------------------*
+*&  Include           ZEDR22_02_F01
+*&---------------------------------------------------------------------*
+*&---------------------------------------------------------------------*
+*&      Form  GET_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM get_data .
+  CLEAR : gt_sflight, gt_sflight[].
+
+  SELECT carrid connid fldate price currency planetype seatsmax seatsocc
+         paymentsum seatsmax_b seatsocc_b seatsmax_f seatsocc_f
+    INTO CORRESPONDING FIELDS OF TABLE gt_sflight
+    FROM sflight
+    WHERE carrid IN s_carrid.
+
+  IF sy-subrc NE 0.
+    MESSAGE 'DATA NOT FOUND' TYPE 'S'.
+    LEAVE LIST-PROCESSING.
+  ENDIF.
+
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_FCAT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM set_fcat USING  p_key p_field p_text p_ref_table P_REF_FIELD.
+
+  gs_fcat-key       = p_key.
+  gs_fcat-fieldname = p_field.
+  gs_fcat-coltext   = p_text.
+  gs_fcat-ref_table = P_REF_TABLE.
+  gs_fcat-REF_FIELD = P_REF_FIELD.
+
+  CASE P_FIELD.
+    WHEN 'PRICE'.
+     gs_fcat-CFIELDNAME = 'CURRENCY'.
+  ENDCASE.
+
+
+  APPEND gs_fcat TO gt_fcat.
+  CLEAR : gs_fcat.
+
+
+*  GS_FCAT-KEY       = 'X'.
+*  GS_FCAT-FIELDNAME = 'CARRID'.
+*  GS_FCAT-COLTEXT = 'AIRLINE'.
+*
+*  APPEND GS_FCAT TO GT_FCAT.
+*  CLEAR : GS_FCAT.
+*
+*  GS_FCAT-KEY       = 'X'.
+*  GS_FCAT-FIELDNAME = 'CONNID'.
+*  GS_FCAT-COLTEXT = 'FLIGHT NUMBER'.
+*
+*  APPEND GS_FCAT TO GT_FCAT.
+*  CLEAR : gs_fcat.
+*
+*  GS_FCAT-KEY       = 'X'.
+*  GS_FCAT-FIELDNAME = 'FLDATE'.
+*  GS_FCAT-COLTEXT = 'DATE'.
+*
+*  APPEND GS_FCAT TO GT_FCAT.
+*  CLEAR : gs_fcat.
+*
+*  GS_FCAT-FIELDNAME = 'PRICE'.
+*  GS_FCAT-COLTEXT = 'AIRFARE'.
+*
+*  APPEND GS_FCAT TO GT_FCAT.
+*  CLEAR : gs_fcat.
+*
+*  GS_FCAT-FIELDNAME = 'CURRENCY'.
+*  GS_FCAT-COLTEXT = 'AIRLINE CURRENCY'.
+*
+*  APPEND GS_FCAT TO GT_FCAT.
+*  CLEAR : gs_fcat.
+*
+*  GS_FCAT-FIELDNAME = 'PLANETYPE'.
+*  GS_FCAT-COLTEXT = 'Plane Type'.
+*
+*  APPEND GS_FCAT TO GT_FCAT.
+*  CLEAR : gs_fcat.
+*
+*  GS_FCAT-FIELDNAME = 'SEATSMAX'.
+*  GS_FCAT-COLTEXT = 'Max. capacity econ.'.
+*
+*  APPEND GS_FCAT TO GT_FCAT.
+*  CLEAR : gs_fcat.
+*
+*  GS_FCAT-FIELDNAME = 'SEATSOCC'.
+*  GS_FCAT-COLTEXT = 'Occupied econ.'.
+*
+*  APPEND GS_FCAT TO GT_FCAT.
+*  CLEAR : gs_fcat.
+*
+*  GS_FCAT-FIELDNAME = 'PAYMENTSUM'.
+*  GS_FCAT-COLTEXT = 'Total'.
+*
+*  APPEND GS_FCAT TO GT_FCAT.
+*  CLEAR : gs_fcat.
+*
+*  GS_FCAT-FIELDNAME = 'SEATSMAX_B'.
+*  GS_FCAT-COLTEXT = 'Max. capacity bus.'.
+*
+*  APPEND GS_FCAT TO GT_FCAT.
+*  CLEAR : gs_fcat.
+*
+*  GS_FCAT-FIELDNAME = 'SEATSOCC_B'.
+*  GS_FCAT-COLTEXT = 'Occupied bus.'.
+*
+*  APPEND GS_FCAT TO GT_FCAT.
+*  CLEAR : gs_fcat.
+*
+*  GS_FCAT-FIELDNAME = 'SEATSMAX_F'.
+*  GS_FCAT-COLTEXT = 'Max. capacity 1st'.
+*
+*  APPEND GS_FCAT TO GT_FCAT.
+*  CLEAR : gs_fcat.
+*
+*  GS_FCAT-FIELDNAME = 'SEATSMAX_F'.
+*  GS_FCAT-COLTEXT = 'Occupied 1st'.
+*
+*  APPEND GS_FCAT TO GT_FCAT.
+*  CLEAR : gs_fcat.
+
+ENDFORM.
+
+----------------------------------------------------------------------------------
+Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750

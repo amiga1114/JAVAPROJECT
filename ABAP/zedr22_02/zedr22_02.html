@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZEDR22_02</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZEDR22_02</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  AVL 프로그램 교육</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report  ZEDR22_02</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+<font color ="#0000FF">*---------------------------------------------------------------------------------------------------------------*</font>
+
+<font color ="#0000FF">* 이벤트</font>
+<font color ="#0000FF">* INITIALIZATION.   - 초기화</font>
+
+<font color ="#0000FF">* AT SELECTION-SCREEN OUTPUT.  - RADIO BUTTON, CHECKBOX 등을을 누를 때 보이고 안보이고를 결정.</font>
+
+<font color ="#0000FF">* AT SELECTION-SCREEN ON P_WERKS.  - 확인을 해라.</font>
+
+<font color ="#0000FF">* AT SELECTION-SCREEN ON VALUE-REQUEST FOR P_LGORT.  - POSSIBLE ENTRY를 생성</font>
+
+<font color ="#0000FF">* START-OF-SELECTION.  - PROGRAM을 실행시 바로 여기로 옴.</font>
+
+<font color ="#0000FF">* END-OF-SELECTION.   - 사용안함.</font>
+
+<font color ="#0000FF">*---------------------------------------------------------------------------------------------------------------*</font>
+
+include <a href ="zedr22_02_top.html">zedr22_02_top</a>.    " global Data
+
+
+include <a href ="zedr22_02_scr.html">zedr22_02_SCR</a>.  " SELECTION SCREEN
+include <a href ="zedr22_02_o01.html">zedr22_02_o01</a>.  " PBO-Modules
+include <a href ="zedr22_02_i01.html">zedr22_02_i01</a>.  " PAI-Modules
+include <a href ="zedr22_02_f01.html">zedr22_02_f01</a>.  " FORM-Routines
+
+
+START-OF-SELECTION.
+PERFORM GET_DATA.
+
+CALL SCREEN '0100'.
+
+<font color ="#0000FF">*GUI Texts</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* 0100 --&gt; SFLIGHT ALV 교육</font>
+
+<font color ="#0000FF">*Text elements</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* T01 검색조건</font>
+
+
+<font color ="#0000FF">*Selection texts</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* S_CARRID D       .</font>
+
+
+<font color ="#0000FF">*Messages</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">* Message class: Hard coded</font>
+<font color ="#0000FF">*   DATA NOT FOUND</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750
+</font>
+</body>
+</html>

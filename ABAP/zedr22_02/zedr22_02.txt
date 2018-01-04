@@ -1,0 +1,61 @@
+*&---------------------------------------------------------------------*
+*& Report  ZEDR22_02
+*&
+*&---------------------------------------------------------------------*
+*&
+*&
+*&---------------------------------------------------------------------*
+
+*---------------------------------------------------------------------------------------------------------------*
+
+* 이벤트
+* INITIALIZATION.   - 초기화
+
+* AT SELECTION-SCREEN OUTPUT.  - RADIO BUTTON, CHECKBOX 등을을 누를 때 보이고 안보이고를 결정.
+
+* AT SELECTION-SCREEN ON P_WERKS.  - 확인을 해라.
+
+* AT SELECTION-SCREEN ON VALUE-REQUEST FOR P_LGORT.  - POSSIBLE ENTRY를 생성
+
+* START-OF-SELECTION.  - PROGRAM을 실행시 바로 여기로 옴.
+
+* END-OF-SELECTION.   - 사용안함.
+
+*---------------------------------------------------------------------------------------------------------------*
+
+INCLUDE zedr22_02_top                           .    " global Data
+
+
+INCLUDE zedr22_02_SCR                           .  " SELECTION SCREEN
+INCLUDE zedr22_02_o01                           .  " PBO-Modules
+INCLUDE zedr22_02_i01                           .  " PAI-Modules
+INCLUDE zedr22_02_f01                           .  " FORM-Routines
+
+
+START-OF-SELECTION.
+PERFORM GET_DATA.
+
+CALL SCREEN '0100'.
+
+*GUI Texts
+*----------------------------------------------------------
+* 0100 --> SFLIGHT ALV 교육
+
+*Text elements
+*----------------------------------------------------------
+* T01 검색조건
+
+
+*Selection texts
+*----------------------------------------------------------
+* S_CARRID D       .
+
+
+*Messages
+*----------------------------------------------------------
+*
+* Message class: Hard coded
+*   DATA NOT FOUND
+
+----------------------------------------------------------------------------------
+Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750
