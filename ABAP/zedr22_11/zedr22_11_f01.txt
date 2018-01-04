@@ -1,0 +1,88 @@
+*&---------------------------------------------------------------------*
+*&  Include           ZEDR22_11_F01
+*&---------------------------------------------------------------------*
+*&---------------------------------------------------------------------*
+*&      Form  GET_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM get_data .
+  CLEAR : gt_data, gt_data[].
+
+  SELECT mblnr mjahr vgart blart budat bktxt
+    INTO CORRESPONDING FIELDS OF TABLE gt_data
+    FROM mkpf
+    WHERE MJAHR EQ P_MJAHR
+      AND MBLNR IN S_MBLNR.
+
+    IF sy-subrc EQ 0.
+      MESSAGE s000 WITH 'Data not found'.
+*      MESSAGE 'DATA NOT FOUND' TYPE 'S'.
+      LEAVE TO LIST-PROCESSING.
+    ENDIF.
+
+    DATA : lv_index LIKE sy-tabix.
+
+  LOOP AT gt_data.
+    lv_index = sy-tabix.
+
+    IF gt_data-VGART = 'WL'.
+      gt_data-color = 'C610'.
+    ENDIF.
+
+    MODIFY gt_data INDEX lv_index TRANSPORTING VGART color.
+
+  ENDLOOP.
+
+
+ENDFORM.
+
+
+FORM set_fcat USING p_key p_field p_text p_ref_table p_ref_field.
+  gs_fcat-key = p_key.
+  gs_fcat-fieldname = p_field.
+  gs_fcat-coltext = p_text.
+  gs_fcat-ref_table = p_ref_table.
+  gs_fcat-ref_field = p_ref_field.
+
+
+
+  APPEND gs_fcat TO gt_fcat.
+  CLEAR gs_fcat.
+
+
+
+ENDFORM.
+
+*&---------------------------------------------------------------------*
+*&      Form  DOUBLE_CLICK
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      -->P_E_ROW  text
+*      -->P_E_COLUMN  text
+*      -->P_ES_ROW_NO  text
+*----------------------------------------------------------------------*
+FORM double_click  USING    p_row     STRUCTURE lvc_s_row
+                            p_column  STRUCTURE lvc_s_col
+                            ps_row_no STRUCTURE lvc_s_roid.
+
+    READ TABLE gt_data INDEX p_row-index.
+
+     IF sy-subrc EQ 0.
+       SET PARAMETER ID : 'MBN' FIELD gt_data-MBLNR,
+                          'MJA' FIELD GT_DATA-MJAHR.
+
+
+       CALL TRANSACTION 'MB03' AND SKIP FIRST SCREEN.
+    ENDIF.
+
+
+
+ENDFORM.
+
+----------------------------------------------------------------------------------
+Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750

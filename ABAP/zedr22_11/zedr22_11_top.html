@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZEDR22_11_TOP</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZEDR22_11_TOP</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZEDR22_11_TOP</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include ZEDR22_11_TOP                                     Report ZEDR22_11</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT ZEDR22_11 MESSAGE-ID oo.
+
+CLASS lcl_event_handler DEFINITION DEFERRED.
+
+TABLES : MKPF.
+
+DATA : BEGIN OF GT_DATA OCCURS 0,
+        MBLNR LIKE MKPF-MBLNR,
+        MJAHR LIKE MKPF-MJAHR,
+        VGART LIKE MKPF-VGART,
+        BLART LIKE MKPF-BLART,
+        BUDAT LIKE MKPF-BUDAT,
+        BKTXT LIKE MKPF-BKTXT,
+        color(4),
+        cell_color TYPE lvc_t_scol,
+       END OF GT_DATA.
+
+
+DATA : GV_FIELD(10).
+
+
+DATA : GO_CONTAINER TYPE REF TO cl_gui_docking_container,
+       GO_GRID      TYPE REF TO cl_gui_alv_grid,
+       GO_HANDLER   TYPE REF TO lcl_event_handler,
+       GS_FCAT      TYPE lvc_s_fcat,
+       GT_FCAT      TYPE lvc_t_fcat,
+       GS_LAYOUT    TYPE lvc_s_layo,
+       GS_VARIANT   TYPE disvariant,
+       gs_sort      TYPE lvc_s_sort,
+       gt_sort      TYPE lvc_t_sort,
+       gs_stable    TYPE lvc_s_stbl,
+       gs_scol      TYPE lvc_s_scol.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750
+</font>
+</body>
+</html>
