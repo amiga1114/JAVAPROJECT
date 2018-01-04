@@ -1,0 +1,56 @@
+*&---------------------------------------------------------------------*
+*& Report ZEDR22_18
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT zedr22_18.
+
+TABLES : mkpf.
+
+DATA : BEGIN OF gt_data OCCURS 0,
+         mjahr       TYPE   mkpf-mjahr,
+         mblnr       TYPE   mkpf-mblnr,
+         vgart       TYPE   mkpf-vgart,
+         vgart_desc TYPE    t158w-ltext,
+         blart      TYPE   mkpf-blart,
+         blart_desc TYPE    t003t-ltext,
+         budat      TYPE   mkpf-budat,
+       END OF gt_data.
+
+SELECTION-SCREEN BEGIN OF BLOCK bl1 WITH FRAME TITLE TEXT-001.
+PARAMETERS : p_mjahr  TYPE mkpf-mjahr OBLIGATORY.
+
+SELECT-OPTIONS : s_mblnr  FOR mkpf-mblnr.
+SELECTION-SCREEN END OF BLOCK bl1.
+
+SET PARAMETER ID : 'EDR' FIELD 'X'.
+
+SUBMIT ZEDR22_12
+WITH p_mjahr EQ p_mjahr
+WITH s_mblnr IN s_mblnr
+AND RETURN.
+
+CLEAR : gt_data, gt_data[].
+
+IMPORT gt_data FROM MEMORY ID 'CYJ'.
+
+IF gt_data[] IS NOT INITIAL.
+  LOOP AT gt_data.
+    WRITE : gt_data-mjahr, gt_data-mblnr, gt_data-vgart,
+            gt_data-vgart_desc,gt_data-blart,
+            gt_data-blart_desc, gt_data-budat,/.
+  ENDLOOP.
+ENDIF.
+
+*Text elements
+*----------------------------------------------------------
+* 001
+
+
+*Selection texts
+*----------------------------------------------------------
+* P_MJAHR D       .
+* S_MBLNR D       .
+
+----------------------------------------------------------------------------------
+Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750
