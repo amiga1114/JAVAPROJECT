@@ -1,0 +1,43 @@
+*&---------------------------------------------------------------------*
+*& Include ZEDR22_09_TOP                                     Report ZEDR22_09
+*&
+*&---------------------------------------------------------------------*
+REPORT zedr22_09 MESSAGE-ID oo.
+
+CLASS lcl_event_handler DEFINITION DEFERRED.
+
+TABLES : sflight.
+
+*DATA : BEGIN OF gt_data OCCURS 0,
+*         carrid     LIKE sflight-carrid,
+*         connid     LIKE sflight-connid,
+*         fldate     LIKE sflight-fldate,
+*         price      LIKE sflight-price,
+*         currency   LIKE sflight-currency,
+*         planetype  LIKE sflight-planetype,
+*         seatsmax   LIKE sflight-seatsmax,
+*         seatsocc   LIKE sflight-seatsocc,
+*         paymentsum LIKE sflight-paymentsum,
+*         color(4),
+*         cell_color TYPE lvc_t_scol,
+*       END OF gt_data.
+
+DATA : GT_DATA TYPE TABLE OF sflight WITH HEADER LINE.
+
+RANGES : gr_connid FOR sflight-connid.
+
+DATA : gO_container TYPE REF TO cl_gui_docking_container,
+       gO_grid      TYPE REF TO cl_gui_alv_grid,
+       GO_HANDLER   TYPE REF TO lcl_event_handler,
+       GO_SFLIGHT   TYPE REF TO ZCL22_SFLIGHT,
+       gs_fcat      TYPE lvc_s_fcat,
+       gt_fcat      TYPE lvc_t_fcat,
+       gs_layout    TYPE lvc_s_layo,
+       gs_sort      TYPE lvc_s_sort,
+       gt_sort      TYPE lvc_t_sort,
+       gs_stable    TYPE lvc_s_stbl,
+       gs_scol      TYPE lvc_s_scol,
+       gs_variant   TYPE disvariant.
+
+----------------------------------------------------------------------------------
+Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750

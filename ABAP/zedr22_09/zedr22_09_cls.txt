@@ -1,0 +1,50 @@
+*&---------------------------------------------------------------------*
+*&  Include           ZEDR22_09_CLS
+*&---------------------------------------------------------------------*
+*&---------------------------------------------------------------------*
+*&       Class LCL_EVENT_HANDLER
+*&---------------------------------------------------------------------*
+*        Text
+*----------------------------------------------------------------------*
+CLASS lcl_event_handler DEFINITION.
+  PUBLIC  SECTION.
+*CLASS-METHODS : HOTSPOT_HANDLE FOR EVENT HOTSPOT_CLICK
+*                               OF cl_gui_alv_grid
+*                IMPORTING
+*                  E_ROW_ID
+*                  E_COLUMN_ID
+*                  ES_ROW_NO.
+
+    METHODS : hotspot_handle FOR EVENT hotspot_click
+          OF cl_gui_alv_grid
+      IMPORTING
+          e_row_id
+          e_column_id
+          es_row_no,
+
+      get_sflight
+        IMPORTING
+          e_carrid TYPE sflight-carrid.
+ENDCLASS.
+*&---------------------------------------------------------------------*
+*&       Class (Implementation)  LCL_EVENT_HANDLER
+*&---------------------------------------------------------------------*
+*        Text
+*----------------------------------------------------------------------*
+CLASS lcl_event_handler IMPLEMENTATION.
+  METHOD hotspot_handle.
+    PERFORM hotspot_handle USING  e_row_id
+                                  e_column_id
+                                  es_row_no.
+
+
+
+  ENDMETHOD.
+
+  METHOD get_sflight.
+    PERFORM get_sflight USING e_carrid.
+  ENDMETHOD.
+ENDCLASS.               "LCL_EVENT_HANDLER
+
+----------------------------------------------------------------------------------
+Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750

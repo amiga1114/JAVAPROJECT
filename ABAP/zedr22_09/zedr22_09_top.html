@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZEDR22_09_TOP</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZEDR22_09_TOP</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZEDR22_09_TOP</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include ZEDR22_09_TOP                                     Report ZEDR22_09</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT zedr22_09 MESSAGE-ID oo.
+
+CLASS lcl_event_handler DEFINITION DEFERRED.
+
+TABLES : sflight.
+
+<font color ="#0000FF">*DATA : BEGIN OF gt_data OCCURS 0,</font>
+<font color ="#0000FF">*         carrid     LIKE sflight-carrid,</font>
+<font color ="#0000FF">*         connid     LIKE sflight-connid,</font>
+<font color ="#0000FF">*         fldate     LIKE sflight-fldate,</font>
+<font color ="#0000FF">*         price      LIKE sflight-price,</font>
+<font color ="#0000FF">*         currency   LIKE sflight-currency,</font>
+<font color ="#0000FF">*         planetype  LIKE sflight-planetype,</font>
+<font color ="#0000FF">*         seatsmax   LIKE sflight-seatsmax,</font>
+<font color ="#0000FF">*         seatsocc   LIKE sflight-seatsocc,</font>
+<font color ="#0000FF">*         paymentsum LIKE sflight-paymentsum,</font>
+<font color ="#0000FF">*         color(4),</font>
+<font color ="#0000FF">*         cell_color TYPE lvc_t_scol,</font>
+<font color ="#0000FF">*       END OF gt_data.</font>
+
+DATA : GT_DATA TYPE TABLE OF sflight WITH HEADER LINE.
+
+RANGES : gr_connid FOR sflight-connid.
+
+DATA : gO_container TYPE REF TO cl_gui_docking_container,
+       gO_grid      TYPE REF TO cl_gui_alv_grid,
+       GO_HANDLER   TYPE REF TO lcl_event_handler,
+       GO_SFLIGHT   TYPE REF TO ZCL22_SFLIGHT,
+       gs_fcat      TYPE lvc_s_fcat,
+       gt_fcat      TYPE lvc_t_fcat,
+       gs_layout    TYPE lvc_s_layo,
+       gs_sort      TYPE lvc_s_sort,
+       gt_sort      TYPE lvc_t_sort,
+       gs_stable    TYPE lvc_s_stbl,
+       gs_scol      TYPE lvc_s_scol,
+       gs_variant   TYPE disvariant.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750
+</font>
+</body>
+</html>
