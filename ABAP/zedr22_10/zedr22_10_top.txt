@@ -1,0 +1,30 @@
+*&---------------------------------------------------------------------*
+*& Include ZEDR22_10_TOP                                     Report ZEDR22_10
+*&
+*&---------------------------------------------------------------------*
+REPORT ZEDR22_10.
+
+TABLES : BKPF.
+
+DATA : BEGIN OF GT_DATA OCCURS 0,
+       BUKRS LIKE BKPF-BUKRS,
+       BELNR LIKE BKPF-BELNR,
+       GJAHR LIKE BKPF-GJAHR,
+       BLART LIKE BKPF-BLART,
+       BUDAT LIKE BKPF-BUDAT,
+       BKTXT LIKE BKPF-BKTXT,
+       END OF GT_DATA.
+
+DATA : GO_CONTAINER TYPE REF TO cl_gui_docking_container,
+       GO_GRID      TYPE REF TO cl_gui_alv_grid,
+       GS_FCAT      TYPE lvc_s_fcat,
+       GT_FCAT      TYPE lvc_t_fcat,
+       GS_LAYOUT    TYPE lvc_s_layo,
+       GS_VARIANT   TYPE disvariant,
+       gs_sort      TYPE lvc_s_sort,
+       gt_sort      TYPE lvc_t_sort,
+       gs_stable    TYPE lvc_s_stbl,
+       gs_scol      TYPE lvc_s_scol.
+
+----------------------------------------------------------------------------------
+Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750
