@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZEDR22_07_TOP</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZEDR22_07_TOP</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZEDR22_07_TOP</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include ZEDR22_07_TOP                                     Report ZEDR22_07</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT ZEDR22_07.
+
+TABLES : RESB.
+
+DATA : BEGIN OF GT_DATA OCCURS 0,
+       RSNUM        LIKE RESB-RSNUM,
+       RSPOS        LIKE RESB-RSPOS,
+       RSART        LIKE RESB-RSART,
+       BDART        LIKE RESB-BDART,
+       MATNR        LIKE RESB-MATNR,
+       MAKTX        LIKE MAKT-MAKTX,
+       WERKS        LIKE RESB-WERKS,
+       WERKS_NAME   LIKE T001W-NAME1,
+       CHARG        LIKE RESB-CHARG,
+       BDMNG        LIKE RESB-BDMNG,
+       MEINS        LIKE RESB-MEINS,
+       END OF GT_DATA.
+
+RANGES : GR_RSART FOR RESB-RSART.
+
+
+
+DATA : GO_CONTAINER TYPE REF TO cl_gui_custom_container,
+       GO_GRID      TYPE REF TO cl_gui_alv_grid,
+       GS_FCAT      TYPE LVC_S_FCAT,
+       GT_FCAT      TYPE LVC_T_FCAT,
+       GS_LAYOUT    TYPE LVC_S_LAYO,
+       GS_SCOL      TYPE LVC_S_SCOL,
+       GS_VARIANT   TYPE DISVARIANT.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750
+</font>
+</body>
+</html>
