@@ -1,0 +1,29 @@
+*&---------------------------------------------------------------------*
+*& Module Pool       SAPMZED22_MARA
+*&
+*&---------------------------------------------------------------------*
+*&
+*&
+*&---------------------------------------------------------------------*
+
+
+INCLUDE MZED22_MARA_TOP                         .    " global Data
+
+ INCLUDE MZED22_MARA_O01                         .  " PBO-Modules
+ INCLUDE MZED22_MARA_I01                         .  " PAI-Modules
+ INCLUDE MZED22_MARA_F01                         .  " FORM-Routines
+
+*GUI Texts
+*----------------------------------------------------------
+* 0100 --> MODULE PRACTICE1
+* 0100 --> MODULE PRACTICE1
+
+
+*Messages
+*----------------------------------------------------------
+*
+* Message class: OO
+*000   & & & &
+
+----------------------------------------------------------------------------------
+Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750

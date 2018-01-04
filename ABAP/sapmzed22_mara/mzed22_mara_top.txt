@@ -1,0 +1,32 @@
+*&---------------------------------------------------------------------*
+*& Include MZED22_MARA_TOP                                   Module Pool      SAPMZED22_MARA
+*&
+*&---------------------------------------------------------------------*
+PROGRAM sapmzed22_mara MESSAGE-ID oo.
+
+DATA : gv_matnr  LIKE mara-matnr,
+       gv_okcode LIKE sy-ucomm.
+
+DATA : BEGIN OF gt_data OCCURS 0,
+         matnr LIKE mara-matnr,
+         maktx LIKE makt-maktx,
+         pstat LIKE mara-pstat,
+         mtart LIKE mara-mtart,
+         matkl LIKE mara-matkl,
+         werks LIKE marc-werks,
+         name1 LIKE t001w-name1,
+         meins LIKE mara-meins,
+       END OF gt_data.
+
+
+
+DATA : go_container TYPE REF TO cl_gui_custom_container,
+       go_grid      TYPE REF TO cl_gui_alv_grid,
+       gs_fcat      TYPE lvc_s_fcat,
+       gt_fcat      TYPE lvc_t_fcat,
+       gs_layout    TYPE lvc_s_layo,
+       gs_stable    TYPE lvc_s_stbl,
+       gs_variant   TYPE disvariant.
+
+----------------------------------------------------------------------------------
+Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750
