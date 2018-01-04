@@ -12,7 +12,7 @@
 *      -->P_0024   text
 *      -->P_0025   text
 *----------------------------------------------------------------------*
-FORM set_fcat  USING    p_key p_field p_text p_ref_table p_ref_field.
+FORM set_fcat  USING    p_key p_field p_text p_ref_table p_ref_field.  
   gs_fcat-key = p_key.
   gs_fcat-fieldname = p_field.
   gs_fcat-coltext = p_text.
