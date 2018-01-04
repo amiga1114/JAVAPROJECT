@@ -1,0 +1,1213 @@
+*&---------------------------------------------------------------------*
+*& Report ZEDR22_01
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT zedr22_01.
+
+
+*DATA : GV_INTEGER(5) TYPE N.
+*GV_INTEGER = 7.
+*WRITE : GV_INTEGER.
+*
+*DATA : GV_NUM(5) TYPE N.
+*GV_NUM = -5.
+*WRITE GV_NUM.
+*
+*DATA : GV_NUM1(5) TYPE I.
+*GV_NUM1 = -5.
+*WRITE GV_NUM1.
+*
+*DATA : GV_NUM2(5) TYPE P.
+*GV_NUM2 = -5.
+*WRITE GV_NUM2.
+*
+*DATA : GV_NUM3(5) TYPE N.
+*GV_NUM3 = 12345.
+*WRITE : GV_NUM3.
+*
+*DATA : GV_NAME(10) TYPE C.
+*GV_NAME = '최유정'.
+*WRITE : GV_NAME.
+*
+*DATA : GV_N(10) TYPE N.
+*GV_N = 10.
+*WRITE : GV_N.
+
+*&---------------------------------------------------------------------*
+
+*DATA : GS_DATA LIKE ZTEDU_22_02,
+*      GT_DATA LIKE TABLE OF ZTEDU_22_02.
+*
+*      GS_DATA-KOKRS = '1000'.
+*      APPEND GS_DATA TO GT_DATA.
+*      GS_DATA-KOKRS = '200'.
+*      APPEND GS_DATA TO GT_DATA.
+
+**&---------------------------------------------------------------------*
+
+*DATA : GS_DATA LIKE ZTEDU22,
+*      GT_DATA LIKE TABLE OF ZTEDU22.
+*
+*GS_DATA-GJAHR = '2017'.
+*GS_DATA-BUKRS = '1000'.
+*GS_DATA-BELNR = '1000000001'.
+*GS_DATA-DMBTR = '21545.00'.
+*GS_DATA-WAERS = 'KRW'.
+*APPEND GS_DATA TO GT_DATA.
+*APPEND GS_DATA TO GT_DATA.
+*APPEND GS_DATA TO GT_DATA.
+*APPEND GS_DATA TO GT_DATA.
+*CLEAR GS_DATA.
+*
+*LOOP AT GT_DATA INTO GS_DATA.
+*WRITE : GS_DATA-GJAHR, GS_DATA-BUKRS, GS_DATA-BELNR,
+*        GS_DATA-DMBTR, GS_DATA-WAERS,/.
+*ENDLOOP.
+
+**&---------------------------------------------------------------------*
+
+DATA : gs_data LIKE sflight,
+       gt_data LIKE TABLE OF sflight.
+
+CLEAR : gt_data.
+
+SELECT *
+  INTO TABLE gt_data
+  FROM sflight
+  WHERE carrid = 'AA'.
+
+
+LOOP AT gt_data INTO gs_data.
+  WRITE : gs_data-carrid, gs_data-connid, gs_data-fldate, gs_data-price, gs_data-currency, gs_data-planetype,/.
+ENDLOOP.
+
+**&-------------------------------------------------------------------------------------------------------------------------
+*
+*DATA : GS_DATA LIKE SFLIGHT,
+*      GT_DATA LIKE TABLE OF SFLIGHT.
+*
+*CLEAR : GT_DATA, GS_DATA.
+*
+*SELECT CARRID CONNID FLDATE PRICE CURRENCY PLANETYPE
+*  INTO CORRESPONDING FIELDS OF TABLE GT_DATA
+*  FROM  SFLIGHT
+*  WHERE CARRID = 'AZ'.
+*
+*  LOOP AT GT_DATA INTO GS_DATA.
+*  WRITE : GS_DATA-CARRID, GS_DATA-CONNID, GS_DATA-FLDATE, GS_DATA-PRICE, GS_DATA-CURRENCY, GS_DATA-PLANETYPE,/.
+*  ENDLOOP.
+
+*DATA : GS_DATA LIKE SPFLI,
+*       GT_DATA LIKE TABLE OF SPFLI.
+*
+*CLEAR : GT_DATA, GS_DATA.
+*
+*SELECT CARRID CONNID COUNTRYFR  CITYFROM AIRPFROM COUNTRYTO CITYTO AIRPTO
+*  INTO CORRESPONDING FIELDS OF TABLE GT_DATA
+*  FROM SPFLI
+*  WHERE CARRID = 'AA' OR CARRID = 'SQ'.
+*
+*  LOOP AT GT_DATA INTO GS_DATA.
+*  WRITE : GS_DATA-CARRID, GS_DATA-CONNID, GS_DATA-COUNTRYFR, GS_DATA-CITYFROM, GS_DATA-AIRPFROM, GS_DATA-COUNTRYTO, GS_DATA-CITYTO, GS_DATA-AIRPTO,/.
+*  ENDLOOP.
+
+*
+*DATA : GS_DATA LIKE SFLIGHT,
+*       GT_DATA LIKE TABLE OF SFLIGHT.
+*
+*CLEAR : GT_DATA, GS_DATA.
+*
+*SELECT CARRID CONNID FLDATE PRICE  CURRENCY PLANETYPE
+*  INTO CORRESPONDING FIELDS OF TABLE GT_DATA
+*  FROM SFLIGHT
+*  WHERE CARRID = 'AA' AND CONNID = '17'.
+**  WHERE ( CARRID = 'AA' AND CONNID = 17 ) or CARRID = 'AZ'.
+*
+*SELECT CARRID CONNID FLDATE PRICE  CURRENCY PLANETYPE
+*  APPENDING CORRESPONDING FIELDS OF TABLE GT_DATA
+*  FROM SFLIGHT
+*  WHERE CARRID = 'AZ'.
+*
+*  LOOP AT GT_DATA INTO GS_DATA.
+*  WRITE : GS_DATA-CARRID, GS_DATA-CONNID, GS_DATA-FLDATE, GS_DATA-PRICE, GS_DATA-CURRENCY, GS_DATA-PLANETYPE,/.
+*  ENDLOOP.
+
+*&-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+*DATA : GS_SPFLI LIKE SPFLI,
+*       GT_SPFLI LIKE TABLE OF SPFLI.
+*
+*CLEAR : GT_SPFLI, GS_SPFLI.
+*
+*SELECT CARRID CONNID COUNTRYFR  CITYFROM AIRPFROM COUNTRYTO CITYTO AIRPTO
+*  INTO CORRESPONDING FIELDS OF TABLE GT_SPFLI
+*  FROM SPFLI
+*  WHERE CARRID = 'AA' AND CONNID = '17'.
+**  WHERE ( CARRID = 'AA' AND CONNID = 17 ) OR CARRID = 'AZ'.
+*
+*SELECT CARRID CONNID COUNTRYFR  CITYFROM AIRPFROM COUNTRYTO CITYTO AIRPTO
+*  APPENDING CORRESPONDING FIELDS OF TABLE GT_SPFLI
+*  FROM SPFLI
+*  WHERE CARRID = 'AZ'.
+*  READ TABLE GT_SPFLI INTO GS_SPFLI INDEX 5.
+*
+*  WRITE : GS_SPFLI-CONNID.
+
+*DATA : GS_DATA LIKE SFLIGHT,
+*       GT_DATA LIKE TABLE OF SFLIGHT.
+*
+*CLEAR : GT_DATA, GS_DATA.
+*
+*SELECT CARRID CONNID FLDATE PRICE  CURRENCY PLANETYPE
+*  INTO CORRESPONDING FIELDS OF TABLE GT_DATA
+*  FROM SFLIGHT
+*  WHERE CARRID = 'AA' AND CONNID = '17'.
+**  WHERE ( CARRID = 'AA' AND CONNID = 17 ) or CARRID = 'AZ'.
+*
+*SELECT CARRID CONNID FLDATE PRICE  CURRENCY PLANETYPE
+*  APPENDING CORRESPONDING FIELDS OF TABLE GT_DATA
+*  FROM SFLIGHT
+*  WHERE CARRID = 'AZ'.
+*
+*  CLEAR : GS_DATA.
+*
+*  READ TABLE GT_DATA INTO GS_DATA WITH KEY CARRID = 'AA' CONNID = '17'.
+**  INDEX 10.
+*
+*  WRITE : GS_DATA-CARRID, GS_DATA-CONNID, GS_DATA-FLDATE, GS_DATA-PRICE, GS_DATA-CURRENCY, GS_DATA-PLANETYPE,/.
+
+*  DATA : GS_SCARR TYPE SCARR,
+*         GT_SCARR TYPE TABLE OF SCARR,
+*         GS_SFLIGHT TYPE SFLIGHT,
+*         GT_SFLIGHT TYPE TABLE OF SFLIGHT.
+*
+*  CLEAR : GS_SCARR, GT_SCARR, GS_SFLIGHT, GT_SFLIGHT.
+*
+*  SELECT CARRID CARRNAME CURRCODE URL
+*    INTO CORRESPONDING FIELDS OF TABLE GT_SCARR
+*    FROM SCARR.
+*
+*  SELECT CARRID CONNID FLDATE PRICE CURRENCY PLANETYPE
+*    INTO CORRESPONDING FIELDS OF TABLE GT_SFLIGHT
+*    FROM SFLIGHT.
+*
+*  LOOP AT GT_SCARR INTO GS_SCARR.
+*    CLEAR : GS_SFLIGHT.
+*    READ TABLE GT_SFLIGHT INTO GS_SFLIGHT WITH KEY CARRID = GS_SCARR-CARRID.
+*    WRITE : GS_SFLIGHT-CARRID, GS_SFLIGHT-CONNID, GS_SFLIGHT-FLDATE, GS_SFLIGHT-PRICE, GS_SFLIGHT-CURRENCY, GS_SFLIGHT-PLANETYPE,/.
+*  ENDLOOP.
+
+* ------------------------------------------------------------------------------------------------------------------------------------------
+
+* DATA : GS_SFLIGHT TYPE SFLIGHT,
+*        GT_SFLIGHT TYPE TABLE OF SFLIGHT,
+*        GS_SBOOK TYPE SBOOK,
+*        GT_SBOOK TYPE TABLE OF SBOOK.
+*
+* CLEAR : GT_SFLIGHT, GS_SFLIGHT, GT_SBOOK, GS_SBOOK.
+*
+* SELECT CARRID CONNID FLDATE PRICE  CURRENCY PLANETYPE
+*  INTO CORRESPONDING FIELDS OF TABLE GT_SFLIGHT
+*  FROM SFLIGHT.
+**  WHERE CARRID = 'AA'.
+*
+* SELECT CARRID CONNID FLDATE BOOKID CUSTOMID CUSTTYPE SMOKER LUGGWEIGHT WUNIT
+*  INTO CORRESPONDING FIELDS OF TABLE GT_SBOOK
+*  FROM SBOOK.
+*
+* LOOP AT GT_SFLIGHT INTO GS_SFLIGHT WHERE CARRID = 'AA'.
+*
+*    CLEAR : GS_SBOOK.
+*
+*    READ TABLE GT_SBOOK INTO GS_SBOOK WITH KEY CARRID = GS_SFLIGHT-CARRID
+*                                               CONNID = GS_SFLIGHT-CONNID
+*                                               FLDATE = GS_SFLIGHT-FLDATE.
+*
+**    WRITE : GS_SBOOK-CARRID, GS_SBOOK-CONNID, GS_SBOOK-FLDATE, GS_SBOOK-BOOKID,
+**            GS_SBOOK-CUSTOMID, GS_SBOOK-CUSTTYPE, GS_SBOOK-SMOKER, GS_SBOOK-LUGGWEIGHT,
+**            GS_SBOOK-WUNIT,/.
+*
+*    IF SY-SUBRC = 0.
+*
+*      WRITE : GS_SBOOK-CARRID, GS_SBOOK-CONNID, GS_SBOOK-FLDATE, GS_SBOOK-BOOKID,
+*              GS_SBOOK-CUSTOMID, GS_SBOOK-CUSTTYPE, GS_SBOOK-SMOKER, GS_SBOOK-LUGGWEIGHT,
+*              GS_SBOOK-WUNIT,/.
+*
+*    ENDIF.
+*
+* ENDLOOP.
+
+* * --------------------------------------------------------------------
+
+* DATA : GS_MARA TYPE MARA,
+*        GT_MARA TYPE TABLE OF MARA,
+*        GS_MAKT TYPE MAKT,
+*        GT_MAKT TYPE TABLE OF MAKT.
+*
+* CLEAR : GS_MARA, GT_MARA, GS_MAKT, GT_MAKT.
+*
+* SELECT MATNR MTART MATKL PSTAT MEINS
+*   INTO CORRESPONDING FIELDS OF TABLE GT_MARA
+*   FROM MARA
+*   WHERE MTART = 'ROH'.
+*
+* SELECT MATNR MAKTX MAKTG
+*   INTO CORRESPONDING FIELDS OF TABLE GT_MAKT
+*   FROM MAKT
+*   WHERE SPRAS = '3'.
+*
+* LOOP AT GT_MARA  INTO GS_MARA.
+*
+*   CLEAR : GS_MAKT.
+*
+*   READ TABLE GT_MAKT INTO GS_MAKT WITH KEY MATNR = GS_MARA-MATNR.
+*
+*   IF SY-SUBRC = 0.
+*
+*     WRITE : GS_MARA-MATNR, GS_MAKT-MAKTX,/.
+*   ENDIF.
+* ENDLOOP.
+
+* * --------------------------------------------------------------------
+
+* DATA : GS_SFLIGHT TYPE SFLIGHT,
+*        GT_SFLIGHT TYPE TABLE OF SFLIGHT,
+*        GS_SBOOK TYPE SBOOK,
+*        GT_SBOOK TYPE TABLE OF SBOOK.
+*
+* CLEAR : GT_SFLIGHT, GS_SFLIGHT, GT_SBOOK, GS_SBOOK.
+*
+* SELECT CARRID CONNID FLDATE PRICE  CURRENCY PLANETYPE
+*  INTO CORRESPONDING FIELDS OF TABLE GT_SFLIGHT
+*  FROM SFLIGHT
+*  WHERE CARRID = 'AA'.
+*
+*
+* SELECT CARRID CONNID FLDATE BOOKID CUSTOMID CUSTTYPE SMOKER LUGGWEIGHT WUNIT
+*  INTO CORRESPONDING FIELDS OF TABLE GT_SBOOK
+*  FROM SBOOK.
+*
+*
+* READ TABLE GT_SFLIGHT INTO GS_SFLIGHT INDEX 1.
+*
+* GS_SFLIGHT-CURRENCY = 'KRW'.
+*
+* MODIFY GT_SFLIGHT FROM GS_SFLIGHT INDEX 1.
+*
+* LOOP AT GT_SFLIGHT INTO GS_SFLIGHT.
+*
+*    WRITE : SY-TABIX,/.
+*
+* ENDLOOP.
+
+* * --------------------------------------------------------------------
+
+* DATA : GS_GLPCA TYPE GLPCA,
+*        GT_GLPCA TYPE TABLE OF GLPCA.
+*
+* CLEAR : GS_GLPCA, GT_GLPCA.
+*
+* SELECT RLDNR RRCTY RVERS RYEAR RTCUR DOCNR DOCLN
+*   INTO CORRESPONDING FIELDS OF TABLE GT_GLPCA
+*   FROM GLPCA
+*  WHERE RLDNR = '8A'
+*    AND RRCTY = '0'
+*    AND RVERS = '000'.
+*
+* LOOP AT GT_GLPCA INTO GS_GLPCA.
+*
+*    GS_GLPCA-RTCUR = 'KRW'.
+*
+*    MODIFY GT_GLPCA FROM GS_GLPCA INDEX SY-TABIX.
+*
+* ENDLOOP.
+
+* * --------------------------------------------------------------------
+
+* DATA : GS_GLPCA TYPE GLPCA,
+*        GT_GLPCA TYPE TABLE OF GLPCA.
+*
+* CLEAR : GS_GLPCA, GT_GLPCA.
+*
+* SELECT RLDNR RRCTY RVERS RYEAR RTCUR DOCNR DOCLN
+*   INTO CORRESPONDING FIELDS OF TABLE GT_GLPCA
+*   FROM GLPCA
+*  WHERE RLDNR = '8A'
+*    AND RRCTY = '0'
+*    AND RVERS = '000'.
+*
+*  CLEAR : GS_GLPCA.
+*  READ TABLE GT_GLPCA INTO GS_GLPCA INDEX 5.
+*
+*  CLEAR : GS_GLPCA.
+*  GS_GLPCA-RTCUR = 'KRW'.
+*
+*  MODIFY GT_GLPCA FROM GS_GLPCA INDEX 5 TRANSPORTING RTCUR.
+
+
+* * --------------------------------------------------------------------
+
+*DATA : GS_COBK TYPE COBK,
+*       GT_COBK TYPE TABLE OF COBK.
+*
+*CLEAR : GS_COBK, GS_COBK.
+*
+*SELECT KOKRS BELNR GJAHR VERSN VRGNG
+*  INTO CORRESPONDING FIELDS OF TABLE GT_COBK
+*  FROM COBK
+*  WHERE VRGNG = 'COIN'.
+*
+*CLEAR : GS_COBK.
+*
+*LOOP AT GT_COBK INTO GS_COBK.
+*  CLEAR : GS_COBK.
+*  GS_COBK-VRGNG = 'AT01'.
+*  MODIFY GT_COBK FROM GS_COBK TRANSPORTING VRGNG.
+*ENDLOOP.
+*
+*BREAK-POINT.
+
+* --------------------------------------------------------------------
+
+*DATA : BEGIN OF GT_DATA4,
+*          MBLNR LIKE MKPF-MBLNR,
+*          MJAHR LIKE MKPF-MJAJR,
+*          DMBTR LIKE MSEG-DMBTR,
+*          MATNR LIKE MSEG-MATNR,
+*       END OF GT_DATA4.
+*
+*DATA : GS_DATA2 TYPE COBK,
+*       GT_DATA2 TYPE TABLE OF COBK WITH HEADER LINE.
+
+* --------------------------------------------------------------------
+
+*DATA : GT_SFLIGHT LIKE TABLE OF SFLIGHT WITH HEADER LINE.
+*
+*CLEAR : GT_SFLIGHT.
+*
+*SELECT CARRID CONNID FLDATE PRICE CURRENCY PLANETYPE
+*  INTO CORRESPONDING FIELDS OF TABLE GT_SFLIGHT
+*  FROM SFLIGHT.
+*
+*LOOP AT GT_SFLIGHT.
+*  GT_SFLIGHT-CURRENCY = 'KRW'.
+*  MODIFY GT_SFLIGHT INDEX SY-TABIX TRANSPORTING CURRENCY.
+*ENDLOOP.
+*
+*
+*LOOP AT GT_SFLIGHT.
+*  WRITE : GT_SFLIGHT-CARRID, GT_SFLIGHT-CONNID, GT_SFLIGHT-FLDATE, GT_SFLIGHT-PRICE, GT_SFLIGHT-CURRENCY, GT_SFLIGHT-PLANETYPE,/.
+*ENDLOOP.
+
+
+* ----------------------------------------------------------------------------------------------------------------------------------------------
+
+*DATA : GS_DATA TYPE SFLIGHT,
+*       GT_DATA TYPE TABLE OF SFLIGHT.
+*CLEAR : GS_DATA, GT_DATA.
+*
+*DATA : GT_DATA2 TYPE TABLE OF SFLIGHT WITH HEADER LINE.
+*
+*CLEAR : GT_DATA2, GT_DATA2[].
+
+* --------------------------------------------------------------------
+
+*DATA : GT_MARA TYPE TABLE OF MARA WITH HEADER LINE,
+*       GT_MAKT TYPE TABLE OF MAKT WITH HEADER LINE.
+*
+*CLEAR : GT_MARA, GT_MARA[], GT_MAKT, GT_MAKT[].
+*
+*SELECT MATNR MTART MATKL MEINS
+*  INTO CORRESPONDING FIELDS OF TABLE GT_MARA
+*  FROM MARA.
+*
+*SELECT MATNR SPRAS MAKTX MAKTG
+*  INTO CORRESPONDING FIELDS OF TABLE GT_MAKT
+*  FROM MAKT
+*  WHERE SPRAS = '3'.
+*
+*LOOP AT GT_MARA.
+*
+*READ TABLE GT_MAKT WITH KEY MATNR = GT_MARA-MATNR.
+*
+* IF SY-SUBRC = 0.
+*
+*  WRITE : GT_MARA-MATNR, GT_MARA-MTART, GT_MAKT-MAKTX,/.
+*
+* ENDIF.
+*
+*ENDLOOP.
+
+* --------------------------------------------------------------------
+
+* 출력용 ITAB
+*DATA : BEGIN OF GT_DATA OCCURS 0,
+*        MATNR LIKE MARA-MATNR,
+*        MTART LIKE MARA-MTART,
+*        MATKL LIKE MARA-MATKL,
+*        MEINS LIKE MARA-MEINS,
+*        MAKTX LIKE MAKT-MAKTX,
+*       END OF GT_DATA.
+*
+*DATA : GT_MARA TYPE TABLE OF MARA WITH HEADER LINE,
+*       GT_MAKT TYPE TABLE OF MAKT WITH HEADER LINE.
+*
+*CLEAR : GT_DATA, GT_DATA[],
+*        GT_MARA, GT_MARA[],
+*        GT_MAKT, GT_MAKT[].
+*
+*SELECT MATNR MTART MATKL MEINS
+*  INTO CORRESPONDING FIELDS OF TABLE GT_MARA
+*  FROM MARA.
+*
+*SELECT MATNR SPRAS MAKTX MAKTG
+*  INTO CORRESPONDING FIELDS OF TABLE GT_MAKT
+*  FROM MAKT
+*  WHERE SPRAS = '3'.
+*
+*  LOOP AT GT_MARA.
+*
+*      GT_DATA-MATNR = GT_MARA-MATNR.
+*      GT_DATA-MTART = GT_MARA-MTART.
+*      GT_DATA-MATKL = GT_MARA-MATKL.
+*      GT_DATA-MEINS = GT_MARA-MEINS.
+*
+*    READ TABLE GT_MAKT WITH KEY MATNR = GT_MARA-MATNR.
+*
+*    IF SY-SUBRC = 0.
+*
+*      GT_DATA-MAKTX = GT_MAKT-MAKTX.
+*
+*    ENDIF.
+*
+*     APPEND GT_DATA.
+*     CLEAR : GT_DATA.
+*
+*  ENDLOOP.
+
+* --------------------------------------------------------------------
+
+*DATA : BEGIN OF GT_DATA OCCURS 0,
+*        MBLNR LIKE MKPF-MBLNR,
+*        ZEILE LIKE MSEG-ZEILE,
+*        MJAHR LIKE MKPF-MJAHR,
+*        VGART LIKE MKPF-VGART,
+*        BLART LIKE MKPF-BLART,
+*        BWART LIKE MSEG-BWART,
+*        MATNR LIKE MSEG-MATNR,
+*        WERKS LIKE MSEG-WERKS,
+*        LGORT LIKE MSEG-LGORT,
+*       END OF GT_DATA.
+*
+*DATA : GT_MKPF TYPE TABLE OF MKPF WITH HEADER LINE,
+*       GT_MSEG TYPE TABLE OF MSEG WITH HEADER LINE.
+*
+*CLEAR : GT_MKPF, GT_MKPF[], GT_MSEG, GT_MSEG[], GT_DATA, GT_DATA[].
+*
+*SELECT MBLNR MJAHR VGART BLART
+*  INTO CORRESPONDING FIELDS OF TABLE GT_MKPF
+*  FROM MKPF
+*  WHERE MJAHR = '2016'.
+*
+*SELECT MBLNR ZEILE BWART MATNR WERKS LGORT
+*  INTO CORRESPONDING FIELDS OF TABLE GT_MSEG
+*  FROM MSEG
+*  WHERE MJAHR = '2016'
+*  AND ZEILE = '1'.
+*
+*  LOOP AT GT_MKPF.
+*    READ TABLE GT_MSEG WITH KEY MBLNR = GT_MKPF-MBLNR.
+*
+*    IF SY-SUBRC = 0.
+*
+**      GT_DATA-MBLNR = GT_MKPF-MBLNR.
+**      GT_DATA-ZEILE = GT_MSEG-ZEILE.
+**      GT_DATA-MJAHR = GT_MKPF-MJAHR.
+**      GT_DATA-VGART = GT_MKPF-VGART.
+**      GT_DATA-BLART = GT_MKPF-BLART.
+**      GT_DATA-BWART = GT_MSEG-BWART.
+**      GT_DATA-MATNR = GT_MSEG-MATNR.
+**      GT_DATA-WERKS = GT_MSEG-WERKS.
+**      GT_DATA-LGORT = GT_MSEG-LGORT.
+*
+**       MOVE : GT_MSEG-LGORT TO GT_DATA-LGORT,
+**              GT_MSEG-WERKS TO GT_DATA-WERKS,
+**              GT_MSEG-MATNR TO GT_DATA-MATNR.
+*
+*       MOVE-CORRESPONDING GT_MKPF TO GT_DATA.
+*       MOVE-CORRESPONDING GT_MSEG TO GT_DATA.
+*
+*       BREAK-POINT.
+*
+*      APPEND GT_DATA.
+*      CLEAR : GT_DATA.
+*    ENDIF.
+*  ENDLOOP.
+
+* --------------------------------------------------------------------
+
+*DATA : BEGIN OF GT_DATA OCCURS 0,
+*        NAME(10),
+*        SUM1 TYPE I,
+*        SUM2 TYPE N,
+*        SUM3 TYPE P,
+*       END OF GT_DATA.
+*
+*GT_DATA-NAME = '홍길동'.
+*GT_DATA-SUM1 = 1.
+*GT_DATA-SUM2 = 1.
+*GT_DATA-SUM3 = 1.
+*
+*COLLECT GT_DATA.
+*
+*GT_DATA-NAME = '홍길동'.
+*GT_DATA-SUM1 = 1.
+*GT_DATA-SUM2 = 1.
+*GT_DATA-SUM3 = 1.
+*
+*COLLECT GT_DATA.
+*
+*GT_DATA-NAME = '홍길동'.
+*GT_DATA-SUM1 = 1.
+*GT_DATA-SUM2 = 1.
+*GT_DATA-SUM3 = 1.
+*
+*COLLECT GT_DATA.
+
+* --------------------------------------------------------------------
+
+*DATA : BEGIN OF GT_DATA OCCURS 0,
+*         CARRID LIKE SFLIGHT-CARRID,
+*         CONNID LIKE SFLIGHT-CONNID,
+*         PRICE LIKE SFLIGHT-PRICE,
+*  END OF GT_DATA.
+*
+*  DATA : GT_SFLIGHT TYPE TABLE OF SFLIGHT WITH HEADER LINE.
+*
+*  CLEAR : GT_dATA, GT_DATA[], GT_SFLIGHT, GT_SFLIGHT[].
+*
+*  SELECT CARRID CONNID FLDATE PRICE
+*    INTO CORRESPONDING FIELDS OF TABLE GT_SFLIGHT
+*    FROM SFLIGHT.
+*
+*    LOOP AT GT_SFLIGHT.
+*      MOVE-CORRESPONDING GT_SFLIGHT TO GT_DATA.
+*
+*      COLLECT GT_DATA.
+*      CLEAR : GT_DATA.
+*    ENDLOOP.
+
+* --------------------------------------------------------------------
+
+*DATA : GT_SFLIGHT TYPE TABLE OF SFLIGHT WITH HEADER LINE.
+*
+*    CLEAR : GT_DATA, GT_DATA[], GT_SFLIGHT, GT_SFLIGHT[].
+*
+*    SELECT CARRID CONNID FLDATE PRICE
+*      INTO CORRESPONDING FIELDS OF TABLE GT_SFLIGHT
+*      FROM SFLIGHT.
+*
+*      LOOP AT GT_SFLIGHT.
+*        MOVE-CORRESPONDING GT_SFLIGHT TO GT_DATA.
+*
+*        APPEND GT_DATA.
+*        CLEAR GT_DATA.
+*      ENDLOOP.
+*
+*    SORT GT_DATA BY CARRID CONNID.
+*    DELETE ADJACENT DUPLICATES FROM GT_DATA COMPARING CARRID CONNID.
+*
+*    DELETE GT_DATA WHERE CARRID = 'AA'
+*                     AND ( CONNID = '64' OR CONNID = '17' ).
+*
+*    SORT GT_DATA BY CONNID.
+*    SORT GT_DATA BY CARRID CONNID DESCENDING.
+
+* --------------------------------------------------------------------
+
+
+*DATA : BEGIN OF GT_DATA OCCURS 0,
+*  CARRID LIKE SFLIGHT-CARRID,
+*  CONNID LIKE SFLIGHT-CONNID,
+*  FLDATE LIKE SFLIGHT-FLDATE,
+*  PRICE LIKE SFLIGHT-PRICE,
+*  BOOKID LIKE SBOOK-BOOKID,
+*  CUSTOMID LIKE SBOOK-CUSTOMID,
+*  CUSTTYPE LIKE SBOOK-CUSTTYPE,
+*  END OF GT_DATA.
+*
+*  CLEAR : GT_DATA, GT_DATA[].
+*
+*  SELECT A~CARRID A~CONNID A~FLDATE A~PRICE B~BOOKID
+*    B~CUSTOMID B~CUSTTYPE
+*   INTO CORRESPONDING FIELDS OF TABLE GT_DATA
+*   FROM SFLIGHT AS A
+*  INNER JOIN SBOOK AS B
+*    ON A~CARRID = B~CARRID
+*    AND A~CONNID = B~CONNID
+*    AND A~FLDATE = B~FLDATE
+*    WHERE A~CARRID = 'AA'
+*    ORDER BY A~FLDATE.
+*
+*    SORT GT_DATA BY CARRID CONNID.
+*
+*    READ TABLE GT_DATA WITH KEY CARRID = 'AA'
+*                                CONNID = '64'
+*                       BINARY SEARCH.
+*
+*    WRITE SY-SUBRC.
+
+
+* --------------------------------------------------------------------
+
+*DATA : BEGIN OF GT_DATA OCCURS 0,
+*        BOOKID LIKE SBOOK-BOOKID,
+*        CUSTOMID LIKE SBOOK-CUSTOMID,
+*        CUSTTYPE LIKE SBOOK-CUSTTYPE.
+*        INCLUDE STRUCTURE SFLIGHT.
+*DATA : END OF GT_DATA.
+*
+*CLEAR : GT_DATA, GT_DATA[].
+*
+*SELECT CARRID CONNID FLDATE PRICE
+*  INTO CORRESPONDING FIELDS OF TABLE GT_DATA
+*  FROM SFLIGHT
+*  ORDER BY FLDATE.
+
+* ---------------------------------------------------
+*
+*  DATA : GS_SFLIGHT TYPE SFLIGHT,
+*         GS_SFLIGHT TYPE TABLE OF SFLIGHT.
+*
+*  CLEAR : GS_SFLIGHT.
+*
+**  SELECT CARRID CONNID FLDATE CURRENCY PRICE
+**    INTO CORRESPONDING FIELDS OF GS_SFLIGHT
+**    FROM SFLIGHT
+**    WHERE CARRID = 'AA'
+**      AND CARRID = '17'
+**      AND FLDATE = '20150429'.
+**  ENDSELECT.
+*
+*  SELECT SINGLE CARRID CONNID FLDATE CURRENCY PRICE
+*    INTO CORRESPONDING FIELDS OF GS_SFLIGHT
+*    FROM SFLIGHT
+*    WHERE CARRID = 'AA'
+*      AND CARRID = '17'
+*      AND FLDATE = '20150429'.
+*  ENDSELECT.
+*
+** ---------------------------------------------------
+*
+*DATA : GV_PRICE LIKE SFLIGHT-PRICE.
+*
+*CLEAR : GV_PRICE.
+*
+*SELECT SINGLE PRICE
+*    INTO GV_PRICE
+*    FROM SFLIGHT
+*    WHERE CARRID = 'AA'
+*      AND CARRID = '17'
+*      AND FLDATE = '20150429'.
+*
+** ---------------------------------------------------
+*
+*DATA : GV_PRICE LIKE SFLIGHT-PRICE,
+*       GV_TYPE LIKE SFLIGHT-PLANDTYPE.
+*
+*DATA : GV_SFLIGHT TYPE SFLIGHT.
+*
+*CLEAR : GV_PRICE, GV_TYPE, GV_SFLIGHT.
+*
+*SELECT SINGLE PRICE PLANETYPE
+*    INTO (GV_PRICE, GV_TYPE, GS_SFLIGHT-CURRENCY)
+*    FROM SFLIGHT
+*    WHERE CARRID = 'AA'
+*      AND CARRID = '17'
+*      AND FLDATE = '20150429'.
+*
+** ---------------------------------------------------
+*
+*DATA : GV_PRICE LIKE SFLIGHT-PRICE,
+*       GV_TYPE LIKE SFLIGHT-PLANDTYPE,
+*       GVZ-CNT TYPE I.
+*
+*DATA : GV_SFLIGHT TYPE SFLIGHT.
+*
+*CLEAR : GV_PRICE, GV_TYPE, GV_SFLIGHT, GV_CNT.
+*
+*SELECT SINGLE SUM (PRICE)
+*    INTO GV_PRICE
+*    FROM SFLIGHT
+*    WHERE CARRID = 'AA'
+*      AND CARRID = '17'
+*      AND FLDATE = '20150429'.
+
+* ---------------------------------------------------
+
+*DATA : GV_CARRID LIKE SFLIGHT-CARRID,
+*       GV-CNT TYPE I.
+*
+*SELECT SINGLE CARRID COUNT(*)
+*    INTO (GV_CARRID, GV_CNT)
+*    FROM SFLIGHT
+*    WHERE CARRID = 'AA'
+*     GROUP BY CARRID.
+
+* ---------------------------------------------------
+
+*DATA : BEGIN OF GT_CNT OCCURS 0,
+*       CARRID LIKE SFLIGHT-CARRID,
+*       CNT TYPE I,
+*       END OF GT_CNT.
+*
+*CLEAR : GT_CNT, GT_CNT[].
+*
+*SELECT CARRID COUNT(*) AS CNT
+*    INTO CORRESPONDING FIELDS OF TABLE GT_CNT
+*    FROM SFLIGHT
+*    GROUP BY CARRID.
+
+* ---------------------------------------------------
+
+*DATA : BEGIN OF GT_DATA OCCURS 0.
+*         INCLUDE STRUCTURE SBOOK.
+*DATA : BUKRS LIKE T001-BUKRS,
+*       WERKS LIKE T001W-WERKS,
+*       MATNR LIKE MARA-MATNR,
+*       DMBTR LIKE MSEG-DMBTR,
+*       LGORT LIKE MSEG-LGORT,
+*       GUBUN(10),
+*       END OF GT_DATA.
+
+* ---------------------------------------------------
+
+*DATA : GT_SFLIGHT TYPE TABLE OF SFLIGHT WITH HEADER LINE.
+*
+*DATA : GV_CNT TYPE I.
+*
+*CLEAR : GT_SFLIGHT, GT_SFLIGHT[], GV_CNT.
+*
+*SELECT CARRID CONNID PLANETYPE PRICE
+*  INTO CORRESPONDING FIELDS OF TABLE GT_SFLIGHT
+*  FROM SFLIGHT.
+*
+*GV_CNT = LINES( GT_SFLIGHT ).
+*
+*DO GV_CNT TIMES.
+*  READ TABLE GT_SFLIGHT INDEX SY-INDEX.
+*
+*  IF SY-SUBRC = 0.
+*    WRITE : GT_SFLIGHT-PLANETYPE,/.
+*  ENDIF.
+*ENDDO.
+
+* ---------------------------------------------------
+
+*DATA : GT_SFLIGHT TYPE TABLE OF SFLIGHT WITH HEADER LINE.
+*
+*DATA : GV_CNT TYPE I.
+*
+*CLEAR : GT_SFLIGHT, GT_SFLIGHT[], GV_CNT.
+*
+*SELECT CARRID CONNID PLANETYPE PRICE
+*  INTO CORRESPONDING FIELDS OF TABLE GT_SFLIGHT
+*  FROM SFLIGHT.
+*
+*GV_CNT = LINES( GT_SFLIGHT ).
+*
+*DO GV_CNT TIMES.
+*  WRITE : 'SY-TABIX: ' , SY-TABIX, 'SY-INDEX: ' , SY-INDEX.
+*
+*  READ TABLE GT_SFLIGHT INDEX SY-INDEX.
+*
+*  WRITE : '읽은 후 SY-TABIX : ' , SY-TABIX,/.
+*ENDDO.
+
+* ---------------------------------------------------
+
+*DATA : GT_SFLIGHT TYPE TABLE OF SFLIGHT WITH HEADER LINE.
+*
+*DATA : GV_CNT_AA TYPE I,
+*       GV_CNT_AZ TYPE I,
+*       GV_CNT_ETC TYPE I.
+*
+*CLEAR : GT_SFLIGHT, GT_SFLIGHT[], GV_CNT_AA, GV_CNT_AZ, GV_CNT_ETC.
+*
+*SELECT CARRID CONNID FLDATE PLANETYPE PRICE
+*  INTO CORRESPONDING FIELDS OF TABLE GT_SFLIGHT
+*  FROM SFLIGHT.
+*
+*LOOP AT GT_SFLIGHT.
+*
+**  IF GT_SFLIGHT-CARRID = 'AA'.
+**      GV_CNT_AA = GV_CNT_AA + 1.
+**  ELSEIF GT_SFLIGHT-CARRID = 'AZ'.
+**      GV_CNT_AZ = GV_CNT_AZ + 1.
+**  ELSEIF GT_SFLIGHT-CARRID = 'ETC'.
+**      GV_CNT_ETC = GV_CNT_ETC + 1.
+**  ENDIF.
+*
+*  CASE GT_SFLIGHT-CARRID.
+*    WHEN 'AA'.
+*      GV_CNT_AA = GV_CNT_AA + 1.
+**      ADD 1 TO GV_CNT_AA.
+*    WHEN 'AZ'.
+*      GV_CNT_AZ = GV_CNT_AZ + 1.
+*    WHEN OTHERS.
+*      GV_CNT_ETC = GV_CNT_ETC + 1.
+*  ENDCASE.
+**  IF보다 CASE를 더 추천!!
+*
+*ENDLOOP.
+* WRITE : 'AA: ', GV_CNT_AA, 'AZ: ', GV_CNT_AZ, 'ETC: ', GV_CNT_ETC.
+
+* ------------------------------------------------------------------------
+
+*DATA : GT_SCARR TYPE TABLE OF SCARR WITH HEADER LINE,
+*       GT_SPFLI TYPE TABLE OF SPFLI WITH HEADER LINE.
+*
+*CLEAR : GT_SCARR, GT_SCARR[], GT_SPFLI, GT_SPFLI[].
+*
+*SELECT CARRID CARRNAME CURRCODE URL
+*  INTO CORRESPONDING FIELDS OF TABLE GT_SCARR
+*  FROM SCARR.
+*
+*SELECT CARRID CONNID COUNTRYFR CITYFROM AIRPFROM COUNTRYTO
+*       CITYTO AIRPTO FLTIME DEPTIME ARRTIME DISTANCE
+*       DISTID FLTYPE
+*  INTO CORRESPONDING FIELDS OF TABLE GT_SPFLI
+*  FROM SPFLI.
+*
+*SORT GT_SCARR BY CARRID.
+*SORT GT_SPFLI BY CARRID.
+*
+*LOOP AT GT_SCARR.
+*
+*  WRITE : GT_SCARR-CARRID,/,SY-ULINE.
+*
+*  READ TABLE GT_SPFLI WITH KEY CARRID = GT_SCARR-CARRID.
+*                      BINARY SEARCH.
+*
+*  LOOP AT GT_SPFLI FROM SY-TABIX.
+*     IF GT_SCARR-CARRID NE GT_SPFLI-CARRID.
+*       EXIT.
+*     ENDIF.
+*
+**    CASE GT_SCARR-CARRID.
+**      WHEN GT_SPFLI-CARRID.
+**         WRITE : GT_SPFLI-CARRID,GT_SPFLI-CONNID, GT_SPFLI-COUNTRYFR,/.
+**    ENDCASE.
+*
+*  ENDLOOP.
+*
+*ENDLOOP.
+
+* ------------------------------------------------------------------------
+
+*DATA : gt_mkpf TYPE TABLE OF mkpf WITH HEADER LINE,
+*       gt_mseg TYPE TABLE OF mseg WITH HEADER LINE.
+*
+*CLEAR : gt_mkpf, gt_mkpf[], gt_mseg, gt_mseg[].
+*
+*SELECT mblnr vgart blart
+*  INTO CORRESPONDING FIELDS OF TABLE gt_mkpf
+*  FROM mkpf
+*  WHERE mjahr = '2016'.
+*
+*SELECT mblnr zeile bwart matnr werks
+*  INTO CORRESPONDING FIELDS OF TABLE gt_mseg
+*  FROM mseg
+*  WHERE mjahr = '2016'.
+*
+*SORT gt_mkpf BY mblnr.
+*SORT gt_mseg BY mblnr.
+*
+*LOOP AT gt_mkpf.
+*
+*  WRITE : 'MKPF-',gt_mkpf-mblnr,/, sy-uline.
+*
+*  READ TABLE gt_mseg WITH KEY mblnr = gt_mkpf-mblnr
+*                     BINARY SEARCH.
+*  IF sy-subrc = 0.
+*    LOOP AT gt_mkpf FROM sy-tabix.
+*      IF gt_mkpf-mblnr NE gt_mseg-mblnr.
+*        EXIT.
+*      ENDIF.
+*
+*      WRITE : 'MSEG-', gt_mseg-mblnr,
+*              'MSEG-', gt_mseg-zeile,
+*              'MSEG-', gt_mseg-bwart,
+*              'MSEG-', gt_mseg-matnr,/.
+*    ENDLOOP.
+*  ENDIF.
+*ENDLOOP.
+
+* ------------------------------------------------------------------------
+
+*TABLES : SFLIGHT.
+*
+*SELECTION-SCREEN BEGIN OF BLOCK B11 WITH FRAME TITLE TEXT-001.
+*  SELECT-OPTIONS : S_CARR FOR SFLIGHT-CARRID OBLIGATORY DEFAULT 'AA',
+*                   S_CONN FOR SFLIGHT-CONNID OBLIGATORY NO INTERVALS MEMORY ID CON,
+*                   S_FLDA FOR SFLIGHT-FLDATE NO-EXTENSION,
+*                   S_CURR FOR SFLIGHT-CURRENCY NO INTERVALS NO-EXTENSION.
+*SELECTION-SCREEN END OF BLOCK B11.
+
+* ------------------------------------------------------------------------
+
+*TABLES : SFLIGHT.
+*
+*SELECTION-SCREEN BEGIN OF BLOCK B11 WITH FRAME TITLE TEXT-001.
+*  SELECT-OPTIONS : S_CARRID FOR SFLIGHT-CARRID,
+*                   S_CONNID FOR SFLIGHT-CONNID.
+*
+*  PARAMETERS     : P_PLTYPE LIKE SFLIGHT-PLANETYPE,
+*                   P_CURR   LIKE SFLIGHT-CURRENCY.
+*SELECTION-SCREEN END OF BLOCK B11.
+*
+*
+*
+*RANGES : GR_PLTYPE FOR SFLIGHT-PLANETYPE,
+*         GR_CURR   FOR SFLIGHT-CURRENCY.
+*
+*DATA : GT_SFLIGHT TYPE TABLE OF SFLIGHT WITH HEADER LINE.
+*
+*CLEAR : GT_SFLIGHT, GT_SFLIGHT[], GR_PLTYPE, GR_PLTYPE[], GR_CURR, GR_CURR[].
+*
+*
+**IF P_PLTYPE IS NOT INITIAL.  //이걸 추천!!
+*IF P_PLTYPE NE SPACE.
+*  GR_PLTYPE-SIGN = 'I'.
+*  GR_PLTYPE-OPTION = 'EQ'.
+*  GR_PLTYPE-LOW = P_PLTYPE.
+*
+*  APPEND GR_PLTYPE.
+*  CLEAR GR_PLTYPE.
+*ENDIF.
+*
+*IF P_PLTYPE NE SPACE.
+*SELECT CARRID CONNID FLDATE PLANETYPE CURRENCY PRICE
+*  INTO CORRESPONDING FIELDS OF TABLE GT_SFLIGHT
+*  FROM SFLIGHT
+*  WHERE CARRID    IN S_CARRID
+*    AND CONNID    IN S_CONNID
+**    AND PLANETYPE = P_PLTYPE.
+*    AND PLANETYPE IN GR_PLTYPE.
+**ELSE
+**  SELECT CARRID CONNID FLDATE PLANETYPE CURRENCY PRICE
+**  INTO CORRESPONDING FIELDS OF TABLE GT_SFLIGHT
+**  FROM SFLIGHT
+**  WHERE CARRID   IN S_CARRID
+**    AND CONNID   IN S_CONNID
+**    AND
+*
+*  IF SY-SUBRC = 0.
+*    LOOP AT GT_SFLIGHT.
+*      WRITE : GT_SFLIGHT-CARRID, GT_SFLIGHT-CONNID, GT_SFLIGHT-PLANETYPE,/.
+*    ENDLOOP.
+*  ENDIF.
+
+* ------------------------------------------------------------------------
+
+*TABLES : mara.
+*
+*SELECTION-SCREEN BEGIN OF BLOCK b11 WITH FRAME TITLE TEXT-001.
+*SELECT-OPTIONS : s_matnr FOR mara-matnr OBLIGATORY,
+*                 s_mtart FOR mara-mtart.
+*
+*PARAMETERS     : p_werks LIKE marc-werks.
+*SELECTION-SCREEN END OF  BLOCK b11.
+*
+*RANGES : gr_werks FOR marc-werks.
+*
+*DATA : BEGIN OF gt_data OCCURS 0,
+*         matnr LIKE mara-matnr,
+*         werks LIKE marc-werks,
+*         mtart LIKE mara-mtart,
+*         matkl LIKE mara-matkl,
+*         meins LIKE mara-meins,
+*         pstat LIKE marc-pstat,
+*       END OF gt_data.
+*
+*CLEAR : gt_data, gt_data[].
+*
+*IF p_werks IS NOT INITIAL.
+*  gr_werks-sign = 'I'.
+*  gr_werks-option = 'EQ'.
+*  gr_werks-low = p_werks.
+*
+*  APPEND gr_werks.
+*  CLEAR gr_werks.
+*ENDIF.
+*
+*SELECT a~matnr b~werks a~mtart a~matkl a~meins b~pstat
+*  INTO CORRESPONDING FIELDS OF TABLE gt_data
+*  FROM mara AS a
+*  INNER JOIN marc AS b
+*     ON a~matnr = b~matnr
+*  WHERE a~matnr    IN s_matnr
+*    AND a~mtart    IN s_mtart
+*    AND b~werks    IN gr_werks.
+*
+*IF sy-subrc = 0.
+*  LOOP AT gt_data.
+*
+*    WRITE : 'MARA- ', gt_data-matnr,
+*            'MARC- ', gt_data-werks,
+*            'MARA- ', gt_data-mtart,
+*            'MARA- ', gt_data-matkl,
+*            'MARA- ', gt_data-meins,
+*            'MARC- ', gt_data-pstat.
+*
+*  ENDLOOP.
+*ENDIF.
+
+* ------------------------------------------------------------------------
+
+*TABLES : scarr, sflight.
+*
+*SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE TEXT-001.
+*SELECT-OPTIONS : s_carrid FOR scarr-carrid OBLIGATORY,
+*                 s_connid FOR sflight-connid NO INTERVALS.
+*
+*PARAMETERS     : p_bookid LIKE sbook-bookid.
+*SELECTION-SCREEN END OF BLOCK b1.
+*
+*RANGES : gr_bookid FOR sbook-bookid.
+*
+*DATA : BEGIN OF gt_data OCCURS 0,
+*         carrid   LIKE scarr-carrid,
+*         connid   LIKE sflight-connid,
+*         fldate   LIKE sflight-fldate,
+*         bookid   LIKE sbook-bookid,
+*         price    LIKE sflight-price,
+*         currency LIKE sflight-currency,
+*         customid LIKE sbook-customid,
+*         custtype LIKE sbook-custtype,
+*         invoice  LIKE sbook-invoice,
+*       END OF gt_data.
+*
+*CLEAR : gt_data, gt_data[], gr_bookid, gr_bookid[].
+*
+*IF p_bookid IS NOT INITIAL.
+*  gr_bookid-sign = 'I'.
+*  gr_bookid-option = 'EQ'.
+*  gr_bookid-low = p_bookid.
+*
+*  APPEND gr_bookid.
+*  CLEAR gr_bookid.
+*ENDIF.
+*
+*SELECT a~carrid b~connid b~fldate c~bookid b~price b~currency c~customid c~custtype c~invoice
+*  INTO CORRESPONDING FIELDS OF TABLE gt_data
+*  FROM scarr AS a
+*  INNER JOIN sflight AS b
+*  ON a~carrid = b~carrid
+*  INNER JOIN sbook AS c
+*  ON b~carrid = c~carrid
+*  AND b~connid = c~connid
+*  AND b~fldate = c~fldate
+*  WHERE a~carrid   IN s_carrid
+*    AND b~connid   IN s_connid
+*    AND c~bookid   IN gr_bookid.
+*
+*IF sy-subrc = 0.
+*  LOOP AT gt_data.
+*
+*    WRITE : gt_data-carrid, gt_data-connid, gt_data-fldate, gt_data-bookid,
+*            gt_data-price, gt_data-currency, gt_data-customid, gt_data-custtype, gt_data-invoice,/.
+*  ENDLOOP.
+*ELSE.
+*  WRITE : 'NO DATA FOUND!!'.
+*ENDIF.
+
+* ------------------------------------------------------------------------
+
+*TABLES : scarr, sflight.
+*
+*SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE TEXT-001.
+*SELECT-OPTIONS : s_carrid FOR scarr-carrid OBLIGATORY,
+*                 s_connid FOR sflight-connid NO INTERVALS.
+*
+*PARAMETERS     : p_bookid AS CHECKBOX,
+*                 p_rd1    RADIOBUTTON GROUP rb1,
+*                 p_rd2    RADIOBUTTON GROUP rb1,
+*                 p_rd3    RADIOBUTTON GROUP rb1,
+*                 p_rd4    RADIOBUTTON GROUP rb1.
+*
+*SELECTION-SCREEN END OF BLOCK b1.
+*
+*CASE 'X'.
+*  WHEN p_rd1.
+*    WRITE : 'RD1'.
+*  WHEN p_rd2.
+*    WRITE : 'RD2'.
+*  WHEN p_rd3.
+*    WRITE : 'RD3'.
+*ENDCASE.
+*
+*RANGES : gr_bookid FOR sbook-bookid.
+*
+*DATA : BEGIN OF gt_data OCCURS 0,
+*         carrid   LIKE scarr-carrid,
+*         connid   LIKE sflight-connid,
+*         fldate   LIKE sflight-fldate,
+*         bookid   LIKE sbook-bookid,
+*         price    LIKE sflight-price,
+*         currency LIKE sflight-currency,
+*         customid LIKE sbook-customid,
+*         custtype LIKE sbook-custtype,
+*         invoice  LIKE sbook-invoice,
+*       END OF gt_data.
+*
+*CLEAR : gt_data, gt_data[], gr_bookid, gr_bookid[].
+*
+**IF p_bookid IS NOT INITIAL.
+**  gr_bookid-sign = 'I'.
+**  gr_bookid-option = 'EQ'.
+**  gr_bookid-low = p_bookid.
+*
+**  APPEND gr_bookid.
+**  CLEAR gr_bookid.
+**ENDIF.
+*
+*SELECT a~carrid b~connid b~fldate c~bookid b~price b~currency c~customid c~custtype c~invoice
+*  INTO CORRESPONDING FIELDS OF TABLE gt_data
+*  FROM scarr AS a
+*  INNER JOIN sflight AS b
+*  ON a~carrid = b~carrid
+*  INNER JOIN sbook AS c
+*  ON b~carrid = c~carrid
+*  AND b~connid = c~connid
+*  AND b~fldate = c~fldate
+*  WHERE a~carrid   IN s_carrid
+*    AND b~connid   IN s_connid
+*    AND c~bookid   IN gr_bookid.
+*
+*IF sy-subrc = 0.
+*  LOOP AT gt_data.
+*
+*    WRITE : gt_data-carrid, gt_data-connid, gt_data-fldate, gt_data-bookid,
+*            gt_data-price, gt_data-currency, gt_data-customid, gt_data-custtype, gt_data-invoice,/.
+*  ENDLOOP.
+*ELSE.
+*  WRITE : 'NO DATA FOUND!!'.
+*ENDIF.
+
+* ------------------------------------------------------------------------
+
+*Text elements
+*----------------------------------------------------------
+* 001 검색조건
+
+
+*Selection texts
+*----------------------------------------------------------
+* P_BOOKID D       .
+* S_CARRID D       .
+* S_CONNID D       .
+
+----------------------------------------------------------------------------------
+Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750
