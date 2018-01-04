@@ -10,5 +10,6 @@ ABAP8_한개 field의 값 중 선택 후 일치하는 것만 추출 : SAPMZED22_
 ABAP9_ 프로그램  : ZEDR22_01
 ABAP10_ALV프로그램  : ZEDR22_02
 ABAP11_자재예약현황조회  : ZEDR22_07
+ABAP12_항공운항정보  : ZEDR22_09
 
 
