@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZEDR22_21</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZEDR22_21</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Material</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report  ZEDR22_21</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+include <a href ="zedr22_21_top.html">ZEDR22_21_TOP</a>.    " global Data
+
+ include <a href ="zedr22_21_s01.html">ZEDR22_21_S01</a>.  " SELECTION SCREEN
+ include <a href ="zedr22_21_o01.html">ZEDR22_21_O01</a>.  " PBO-Modules
+ include <a href ="zedr22_21_i01.html">ZEDR22_21_I01</a>.  " PAI-Modules
+ include <a href ="zedr22_21_f01.html">ZEDR22_21_F01</a>.  " FORM-Routines
+
+ START-OF-SELECTION.
+
+PERFORM GET_DATA.
+
+CALL SCREEN '0100'.
+
+<font color ="#0000FF">*GUI Texts</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* 0100 --&gt; MATERIAL</font>
+
+<font color ="#0000FF">*Text elements</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* T01 검색조건</font>
+
+
+<font color ="#0000FF">*Selection texts</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* P_CBO         CBO에서 조회</font>
+<font color ="#0000FF">* P_STAN         스탠다드에서 조회</font>
+<font color ="#0000FF">* S_MATNR D       .</font>
+
+
+<font color ="#0000FF">*Messages</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">* Message class: OO</font>
+<font color ="#0000FF">*000   & & & &</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750
+</font>
+</body>
+</html>

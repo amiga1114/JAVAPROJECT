@@ -1,0 +1,26 @@
+*&---------------------------------------------------------------------*
+*& Include ZEDR22_21_TOP                                     Report ZEDR22_21
+*&
+*&---------------------------------------------------------------------*
+REPORT zedr22_21 MESSAGE-ID oo.
+
+TABLES : mara.
+
+DATA : gt_data TYPE TABLE OF ztedu22_02 WITH HEADER LINE.
+
+TABLES : ztedu22_01.
+
+DATA : gv_okcode LIKE sy-ucomm.
+
+DATA : go_container TYPE REF TO cl_gui_docking_container,
+       go_grid      TYPE REF TO cl_gui_alv_grid,
+       gs_fcat      TYPE lvc_s_fcat,
+       gt_fcat      TYPE lvc_t_fcat,
+       gs_layout    TYPE lvc_s_layo,
+       gs_stable    TYPE lvc_s_stbl,
+       gs_row       TYPE lvc_s_row,
+       gt_row       TYPE lvc_t_row,
+       gs_variant   TYPE disvariant.
+
+----------------------------------------------------------------------------------
+Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750
