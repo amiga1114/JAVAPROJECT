@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPPG0320_ZM4_SCR</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPPG0320_ZM4_SCR</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZPPG0320_03_SCR</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&  Include           ZPPG0320_ZM4_SCR</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+TABLES : SSCRFIELDS.
+
+SELECTION-SCREEN BEGIN OF BLOCK bl1 WITH FRAME TITLE text-t01.
+  PARAMETERS : P_PATHS TYPE RLGRAP-FILENAME
+                       VISIBLE LENGTH 50
+                       DEFAULT 'C:\'.
+SELECTION-SCREEN END OF BLOCK bl1.
+
+SELECTION-SCREEN FUNCTION KEY 1.
+SELECTION-SCREEN FUNCTION KEY 2.
+
+<font color ="#0000FF">**********************************************************************</font>
+<font color ="#0000FF">* AT SELECTION-SCREEN</font>
+<font color ="#0000FF">**********************************************************************</font>
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR P_PATHS.
+ PERFORM GET_FILE USING 'O' P_PATHS.
+
+<font color ="#0000FF">**********************************************************************</font>
+<font color ="#0000FF">* 셀렉션 스크린 상단에 Function Button 추가. (1-5개까지 등록가능)</font>
+<font color ="#0000FF">**********************************************************************</font>
+ AT SELECTION-SCREEN.
+  CASE SSCRFIELDS-UCOMM.
+    WHEN 'FC01'.
+      PERFORM DOWNLOAD_TEMPLETE.
+    WHEN 'FC02'.
+      PERFORM clear_scr200_data.
+      CALL SCREEN '0200'.
+<font color ="#0000FF">**      PERFORM SAVE_BAPI_VIEWNFLD.</font>
+  ENDCASE.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750
+</font>
+</body>
+</html>

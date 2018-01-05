@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPPG0320_ZM4</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPPG0320_ZM4</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Material Master Maintence Program</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report  ZPPG0320_ZM4</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT ZPPG0320_ZM4 MESSAGE-ID ZPPGM.
+
+include <a href ="zppg0320_zm4_top.html">ZPPG0320_ZM4_TOP</a>.                 " global Data
+
+include <a href ="zppg0320_zm4_scr.html">ZPPG0320_ZM4_SCR</a>.                " Selection SCR
+include <a href ="zppg0320_zm4_o01.html">ZPPG0320_ZM4_O01</a>.              " PBO-Modules
+include <a href ="zppg0320_zm4_i01.html">ZPPG0320_ZM4_I01</a>.                    " PAI-Modules
+include <a href ="zppg0320_zm4_f01.html">ZPPG0320_ZM4_F01</a>.                " FORM-Routines
+
+<font color ="#0000FF">*</font>
+ INITIALIZATION.
+  PERFORM DO_INIT.
+
+ START-OF-SELECTION.
+  PERFORM get_SCR200_data.
+  PERFORM get_xls_data.
+  PERFORM MODIFY_GT_DATA.
+
+  IF gt_data[] IS INITIAL.
+    MESSAGE S001 WITH '엑셀 업로드가 실패하였습니다.' DISPLAY LIKE 'E'.
+  ELSE.
+<font color ="#0000FF">*    PERFORM set_complete_it.    " 자체적 해결법. 하지만 좋은 방법 아님.</font>
+    CALL SCREEN '0100'.
+  ENDIF.
+
+<font color ="#0000FF">*GUI Texts</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* 0100 --&gt; Creata Material Master Program</font>
+<font color ="#0000FF">* 0200 --&gt; View Field Maintence</font>
+
+<font color ="#0000FF">*Text elements</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* F01 Templete Download</font>
+<font color ="#0000FF">* F02 View and Field</font>
+
+
+<font color ="#0000FF">*Selection texts</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* P_PATHS D       .</font>
+
+
+<font color ="#0000FF">*Messages</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">* Message class: ZPPGM</font>
+<font color ="#0000FF">*000</font>
+<font color ="#0000FF">*001</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750
+</font>
+</body>
+</html>

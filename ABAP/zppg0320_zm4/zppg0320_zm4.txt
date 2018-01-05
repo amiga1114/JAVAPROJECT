@@ -1,0 +1,57 @@
+*&---------------------------------------------------------------------*
+*& Report  ZPPG0320_ZM4
+*&
+*&---------------------------------------------------------------------*
+*&
+*&
+*&---------------------------------------------------------------------*
+REPORT ZPPG0320_ZM4 MESSAGE-ID ZPPGM.
+
+INCLUDE ZPPG0320_ZM4_TOP.                 " global Data
+
+INCLUDE ZPPG0320_ZM4_SCR.                " Selection SCR
+INCLUDE ZPPG0320_ZM4_O01.              " PBO-Modules
+INCLUDE ZPPG0320_ZM4_I01.                    " PAI-Modules
+INCLUDE ZPPG0320_ZM4_F01.                " FORM-Routines
+
+*
+ INITIALIZATION.
+  PERFORM DO_INIT.
+
+ START-OF-SELECTION.
+  PERFORM get_SCR200_data.
+  PERFORM get_xls_data.
+  PERFORM MODIFY_GT_DATA.
+
+  IF gt_data[] IS INITIAL.
+    MESSAGE S001 WITH '엑셀 업로드가 실패하였습니다.' DISPLAY LIKE 'E'.
+  ELSE.
+*    PERFORM set_complete_it.    " 자체적 해결법. 하지만 좋은 방법 아님.
+    CALL SCREEN '0100'.
+  ENDIF.
+
+*GUI Texts
+*----------------------------------------------------------
+* 0100 --> Creata Material Master Program
+* 0200 --> View Field Maintence
+
+*Text elements
+*----------------------------------------------------------
+* F01 Templete Download
+* F02 View and Field
+
+
+*Selection texts
+*----------------------------------------------------------
+* P_PATHS D       .
+
+
+*Messages
+*----------------------------------------------------------
+*
+* Message class: ZPPGM
+*000
+*001
+
+----------------------------------------------------------------------------------
+Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750

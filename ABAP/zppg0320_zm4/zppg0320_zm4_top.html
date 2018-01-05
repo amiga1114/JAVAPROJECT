@@ -1,0 +1,189 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPPG0320_ZM4_TOP</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPPG0320_ZM4_TOP</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZPPG0320_03_TOP</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include ZPPG0320_03_TOP                                   Report ZPPG0320_03</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+
+<font color ="#0000FF">**********************************************************************</font>
+<font color ="#0000FF">* 광역변수</font>
+<font color ="#0000FF">**********************************************************************</font>
+DATA : gv_file   TYPE rlgrap-filename,
+       gv_okcode TYPE sy-ucomm.
+
+
+<font color ="#0000FF">**********************************************************************</font>
+<font color ="#0000FF">* TYPES  / 엑셀의 데이터만을 담을 타입.</font>
+<font color ="#0000FF">**********************************************************************</font>
+TYPES : BEGIN OF t_xlsx,
+         matnr      LIKE mara-matnr ,
+         maktx      LIKE makt-maktx ,  "Material Description
+         mtart      LIKE mara-mtart	,  "Material Type
+         werks      LIKE marc-werks	,  "Plant
+         lgort      LIKE mard-lgort	,  "Storage Location
+         meins      LIKE mara-meins	,  "Base Unit of Measure
+         matkl      LIKE mara-matkl	,  "Material Group
+         spart      LIKE mara-spart	,  "Division
+         bismt      LIKE mara-bismt	,  "Old Material Number
+         brgew      LIKE mara-brgew	,  "Gross Weight
+         ntgew      LIKE mara-ntgew	,  "Net Weight
+         gewei      LIKE mara-gewei	,  "Weight unit
+         klart      LIKE rmclf-klart,  "clss Type
+         class      LIKE rmclf-class,  "Class
+         magrv      LIKE mara-magrv	,  "Matl grp pack.matls
+         vhart      LIKE mara-vhart	,  "Packaging mat. Type
+         mvgr1      LIKE mvke-mvgr1	,  "Material group 1
+         mvgr2      LIKE mvke-mvgr2	,
+         mvgr3      LIKE mvke-mvgr3	,
+         mvgr4      LIKE mvke-mvgr4	,
+         mvgr5      LIKE mvke-mvgr5	,
+         raube      LIKE mara-raube	,  "Storage Conditions
+         usequ      LIKE marc-usequ	,  "Quota arrangement usage
+         xchpf      LIKE marc-xchpf	,
+         kordb      LIKE marc-kordb	,
+         lgfsb      LIKE marc-lgfsb ,  "Storage loc. for EP.
+         bstma      LIKE marc-bstma	,
+         sobsl      LIKE marc-sobsl	,
+         plifz      LIKE marc-plifz ,
+         ssqss      LIKE marc-ssqss	,
+         qzgtp      LIKE marc-qzgtp	,
+         lgpbe      LIKE mard-lgpbe	,
+         art        LIKE qmat-art	  ,
+         aktiv      LIKE qmat-aktiv ,
+         bklas      LIKE mbew-bklas ,
+         ncost      LIKE marc-ncost ,
+         dismm      LIKE marc-dismm ,   "MRP Type
+         dispo      LIKE marc-dispo ,   "MRP Controller
+         sbdkz      LIKE marc-sbdkz ,   "Individual/c
+         mtpos      LIKE mvke-mtpos ,   "Item category group
+         dzeit      LIKE marc-dzeit ,   "In-house production time
+         fabkz      LIKE marc-fabkz ,   "JIT delivery sched.
+         lgpro      LIKE marc-lgpro ,   "Prod. stor. Location(ALABAMA 추가 JDH-2016.01.11)
+         VKORG      LIKE MVKE-VKORG,    "Sales Org
+         VTWEG      LIKE MVKE-VTWEG,    "Sales Dis.Chan
+         VPRSV      LIKE MBEW-VPRSV,
+         value_char LIKE bapi1003_alloc_values_char-value_char.
+TYPES : END OF t_xlsx .
+
+<font color ="#0000FF">**********************************************************************</font>
+<font color ="#0000FF">*2.Template  200번 SCREEN DATA</font>
+<font color ="#0000FF">**********************************************************************</font>
+
+<font color ="#0000FF">* 200 SCREEN PRIMARY KEY</font>
+DATA : GV_MTART TYPE ZPPG0320_ZM4-MTART,
+       GV_WERKS TYPE ZPPG0320_ZM4-WERKS.
+
+
+DATA:BEGIN OF GT_I , "OCCURS 0,
+<font color ="#0000FF">*       BASIC VIEW</font>
+       MTPOS_MARA LIKE MARA-MTPOS_MARA,  "GenItemCatGroup
+       MBRSH      LIKE MARA-MBRSH,       "Industy Sector
+<font color ="#0000FF">*       Sales1</font>
+       VRKME      LIKE MVKE-VRKME     ,  "Sales unit
+       ALAND      LIKE MLAN-ALAND     ,	 "Country
+       TAXM1      LIKE MLAN-TAXM1     ,	 "TAX Classicfication
+       DWERK      LIKE MVKE-DWERK     ,  "Delivering Plant
+<font color ="#0000FF">*       Purchasing</font>
+       EKGRP      LIKE MARC-EKGRP     ,  "Purchasing Group
+<font color ="#0000FF">*       MRP1</font>
+       DISGR      LIKE MARC-DISGR     ,  "MRP Group
+       DISLS      LIKE MARC-DISLS     ,  "Lot size
+<font color ="#0000FF">*       MRP3</font>
+       PERKZ      LIKE MARC-PERKZ     ,  "Period Indicator
+       STRGR      LIKE MARC-STRGR     ,  "Strategy group
+       MTVFP      LIKE MARC-MTVFP     ,  "Availability check
+<font color ="#0000FF">*       Quality     management</font>
+       QMPUR      LIKE MARA-QMPUR     ,  "QM proc. active
+<font color ="#0000FF">*       Accouting 1</font>
+       MLMAA      LIKE MBEW-MLMAA     ,  "ML.act.
+       MLAST      LIKE MBEW-MLAST     ,  "Price Determ.
+<font color ="#0000FF">*       Sales2</font>
+       KONDM      LIKE MVKE-KONDM     ,  "Material pricing grp
+       KTGRM      LIKE MVKE-KTGRM     ,  "Acct assignment grp
+<font color ="#0000FF">*       MRP2     , "</font>
+       BESKZ      LIKE MARC-BESKZ     ,  "Procurement type
+       FHORI      LIKE MARC-FHORI     ,  "SchedMargin key
+<font color ="#0000FF">*       MRP4</font>
+       ALTSL      LIKE MARC-ALTSL     ,  "Selection method
+       SAUFT      LIKE MARC-SAUFT     ,  "Repetitive mfg(REM)
+       SFEPR      LIKE MARC-SFEPR     ,  "REM profile
+       KZBED      LIKE MARC-KZBED     ,  "Indicator for Requirements Grouping
+<font color ="#0000FF">*       Costing1</font>
+       EKALR      LIKE MBEW-EKALR     ,  "With Qty Structure
+       HKMAT      LIKE MBEW-HKMAT     ,  "Material Origin
+       PRCTR      LIKE MARC-PRCTR     ,  "Profit Center
+       LOSGR      LIKE MARC-LOSGR     ,  "Lot Size for Product Costing
+<font color ="#0000FF">*       Sales General</font>
+       TRAGR      LIKE MARA-TRAGR     ,  "Trans. Grp
+       LADGR      LIKE MARC-LADGR     ,  "LoadingGrp
+       ZPLP1      LIKE MBEW-ZPLP1     ,  "Planned Price 1
+       ZPLD1      LIKE MBEW-ZPLD1     ,  "Planned Price Date 1
+       BASIC_VIEW                     ,  "* Basic Data
+       SALES_VIEW                     ,  "* Sales Data
+       PURCHASE_VIEW                  ,  "* Purchasing Data
+       MRP_VIEW                       ,  "* MRP Dtata
+       PNST_VIEW                      ,  "* General Plant / Storage Data
+       QUALITY_VIEW                   ,  "* Quality Data
+       ACN_VIEW                       ,  "* Accounting/Costing Data
+END OF  GT_I.
+
+<font color ="#0000FF">**********************************************************************</font>
+<font color ="#0000FF">* ZPPG0320_ZM4 조회용 인터널 테이블</font>
+<font color ="#0000FF">**********************************************************************</font>
+
+<font color ="#0000FF">*DATA : gt_0320t  TYPE TABLE OF zppg0320_ZM4 WITH HEADER LINE.</font>
+<font color ="#0000FF">*DATA : gt_0320t TYPE zppg0320_ZM4 OCCURS 0.</font>
+
+DATA : gt_0320t  TYPE TABLE OF zppg0320_ZM4.
+DATA : gs_0320t  LIKE LINE OF gt_0320t.
+<font color ="#0000FF">*DATA : gs_0320t  TYPE zppg0320_ZM4.</font>
+
+<font color ="#0000FF">*---- GT_DATA용 TYPE 정의</font>
+TYPES : BEGIN OF T_DATA.
+TYPES : STATS     TYPE C LENGTH 4,   " Signal.
+        REMSG     TYPE BAPI_MSG.     " Return MSG.
+        INCLUDE TYPE T_XLSX.
+        INCLUDE STRUCTURE GT_I.
+TYPES : END OF T_DATA .
+
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">* ALV에 뿌려질 최종적인 Internal Table</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+DATA: GT_DATA   TYPE T_DATA         OCCURS 0 WITH HEADER LINE,
+      GT_XLSX   TYPE T_XLSX         OCCURS 0 WITH HEADER LINE,
+      GT_XSTB   LIKE ALSMEX_TABLINE OCCURS 0 WITH HEADER LINE.
+
+DATA: GS_DATA   TYPE T_DATA.
+
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">* Field symbols</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+FIELD-SYMBOLS : &lt;FS&gt; TYPE ANY.
+
+<font color ="#0000FF">**********************************************************************</font>
+<font color ="#0000FF">* SCREEN 0100 생성을 위한 변수 선언.</font>
+<font color ="#0000FF">* 추가로 배운 사항 : MODULE에서 선언한 변수들은 전역변수로 인식된다.</font>
+<font color ="#0000FF">**********************************************************************</font>
+DATA : go_container  TYPE REF TO cl_gui_docking_container,
+       go_grid       TYPE REF TO cl_gui_alv_grid,
+       gs_layout     TYPE lvc_s_layo,
+       gs_variant    TYPE disvariant,
+       gs_fcat       TYPE lvc_s_fcat,
+       gt_fcat       TYPE lvc_t_fcat,
+       gs_stable     TYPE lvc_s_stbl.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750
+</font>
+</body>
+</html>

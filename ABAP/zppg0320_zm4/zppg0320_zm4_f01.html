@@ -1,0 +1,870 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPPG0320_ZM4_F01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPPG0320_ZM4_F01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZPPG0320_03_F01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&  Include           ZPPG0320_ZM4_F01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  GET_FILE</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*      --&gt;P_0041   text</font>
+<font color ="#0000FF">*      --&gt;P_P_PATHS  text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+FORM get_file  USING    p_mode
+                        px_fname.
+
+
+  CALL FUNCTION 'WS_FILENAME_GET'
+    EXPORTING
+      def_filename     = px_fname
+      def_path         = 'C:\ '
+      mask             = ',*.*,*.*. '
+      mode             = p_mode
+    IMPORTING
+      filename         = px_fname
+    EXCEPTIONS
+      inv_winsys       = 1
+      no_batch         = 2
+      selection_cancel = 3
+      selection_error  = 4
+      OTHERS           = 5.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  DO_INIT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*  --&gt;  p1        text</font>
+<font color ="#0000FF">*  &lt;--  p2        text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+FORM do_init .
+  DATA: ls_functxt TYPE smp_dyntxt.
+
+  CLEAR ls_functxt.
+  ls_functxt-icon_id    = icon_xls.
+  ls_functxt-icon_text  = ls_functxt-quickinfo  = TEXT-f01.
+  sscrfields-functxt_01 = ls_functxt.
+
+  CLEAR ls_functxt.
+  ls_functxt-icon_id    = icon_select_detail.
+  ls_functxt-icon_text  = ls_functxt-quickinfo  = TEXT-f02.
+  sscrfields-functxt_02 = ls_functxt.
+
+<font color ="#0000FF">* 선언하는 순서대로 그냥 FC01, FC02 가 된다.  최대 5개를 선언할 수 있다.</font>
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  DOWNLOAD_TEMPLETE</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*  --&gt;  p1        text</font>
+<font color ="#0000FF">*  &lt;--  p2        text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+FORM download_templete .
+
+  DATA : wwwdata_item LIKE wwwdatatab,
+         rc           TYPE i.
+
+  gv_file = 'C:\자재마스터생성양식.xls'.
+  PERFORM get_file USING 'S' gv_file.
+
+  IF sy-subrc &lt;&gt; 0 OR gv_file IS INITIAL.
+    "MESSAGE S001 WITH 'Cancel Template Download File!'.
+    MESSAGE s001 WITH TEXT-m01.
+    EXIT.
+  ENDIF.
+
+<font color ="#0000FF">**********************************************************************</font>
+<font color ="#0000FF">*캐시를 삭제하는 부분</font>
+<font color ="#0000FF">**********************************************************************</font>
+<font color ="#0000FF">*  CALL FUNCTION 'WS_FILE_DELETE'</font>
+<font color ="#0000FF">*    EXPORTING</font>
+<font color ="#0000FF">*      file   = gv_file</font>
+<font color ="#0000FF">*    IMPORTING</font>
+<font color ="#0000FF">*      return = rc.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  IF rc = 0 OR rc = 1.</font>
+<font color ="#0000FF">*  ELSE.</font>
+<font color ="#0000FF">**    MESSAGE S001 WITH 'Fail Delete File!'.</font>
+<font color ="#0000FF">*    MESSAGE s001 WITH TEXT-m02.</font>
+<font color ="#0000FF">*    EXIT.</font>
+<font color ="#0000FF">*  ENDIF.</font>
+
+<font color ="#0000FF">**********************************************************************</font>
+<font color ="#0000FF">* 실질적으로 WWWDATA 테이블에서 탬플릿을 찾아오는 부분 / ID를 주고 펑션으로 가져오는 방식도 있다.</font>
+<font color ="#0000FF">**********************************************************************</font>
+  SELECT SINGLE *
+    INTO CORRESPONDING FIELDS OF wwwdata_item
+    FROM wwwdata
+   WHERE objid = 'ZPPG0320_ZM4'.
+
+  CALL FUNCTION 'DOWNLOAD_WEB_OBJECT'
+    EXPORTING
+      key         = wwwdata_item
+      destination = gv_file.
+
+
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  GET_XLS_DATA</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*      --&gt;P_SPACE  text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+FORM get_xls_data.
+
+  PERFORM upload_data.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  UPLOAD_DATA</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*  --&gt;  p1        text</font>
+<font color ="#0000FF">*  &lt;--  p2        text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+FORM upload_data .
+
+  CLEAR : gt_xlsx, gt_xlsx[], gt_xstb, gt_xstb[].
+
+<font color ="#0000FF">*-- Excel 파일 데이터를 IT에 담아주는 펑션.</font>
+  CALL FUNCTION 'ALSM_EXCEL_TO_INTERNAL_TABLE'
+    EXPORTING
+      filename                = p_paths
+      i_begin_col             = 1
+      i_begin_row             = 3
+      i_end_col               = 100
+      i_end_row               = 65000
+    TABLES
+      intern                  = gt_xstb
+    EXCEPTIONS
+      inconsistent_parameters = 1
+      upload_ole              = 2
+      OTHERS                  = 3.
+
+  IF sy-subrc EQ 0.
+    LOOP AT gt_xstb.
+      ASSIGN COMPONENT gt_xstb-col OF STRUCTURE gt_xlsx TO &lt;fs&gt;.
+
+<font color ="#0000FF">*     IF GT_XSTB-COL = '0011' OR GT_XSTB-COL = '0012' .</font>
+<font color ="#0000FF">*      CLEAR LV_DIGIT.</font>
+<font color ="#0000FF">*      LV_DIGIT = GT_XSTB-VALUE .</font>
+<font color ="#0000FF">*      call function 'ZCOG_CONVERT_DIGIT'</font>
+<font color ="#0000FF">*      CHANGING</font>
+<font color ="#0000FF">*        CV_DIGIT       = LV_DIGIT.</font>
+<font color ="#0000FF">*        GT_XSTB-VALUE = LV_DIGIT .</font>
+<font color ="#0000FF">*     ENDIF.</font>
+
+      MOVE gt_xstb-value TO &lt;fs&gt;.
+      AT END OF row.
+        APPEND gt_xlsx.
+        CLEAR gt_xlsx.
+      ENDAT.
+    ENDLOOP.
+  ELSE.
+    MESSAGE s000 WITH 'Data Upload Fail' DISPLAY LIKE 'E'.
+    EXIT.
+  ENDIF.
+
+  LOOP AT gt_xlsx.
+    MOVE-CORRESPONDING gt_xlsx TO gt_data.
+<font color ="#0000FF">*    GT_DATA-STATS = icon_green_light.</font>
+    gt_data-stats = icon_yellow_light.
+    APPEND  gt_data.
+    CLEAR : gt_data, gt_xlsx.
+  ENDLOOP.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  INIT_ALV_0100</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*  --&gt;  p1        text</font>
+<font color ="#0000FF">*  &lt;--  p2        text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+FORM init_alv_0100 .
+
+  IF go_container IS NOT BOUND.
+    PERFORM create_object.
+    PERFORM set_layout.
+    PERFORM set_field_catalog.
+    PERFORM display_grid.
+  ELSE.
+    PERFORM grid_refresh.
+  ENDIF.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  CREATE_CONTAINER</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*  --&gt;  p1        text</font>
+<font color ="#0000FF">*  &lt;--  p2        text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+FORM create_object .
+
+  CREATE OBJECT go_container
+    EXPORTING
+      side      = go_container-&gt;dock_at_left
+<font color ="#0000FF">*     side      = 1</font>
+<font color ="#0000FF">*     side      = CL_GUI_DOCKING_CONTAINER=&gt;DOCK_AT_LEFT</font>
+      extension = 2000.
+
+  CREATE OBJECT go_grid
+    EXPORTING
+      i_parent = go_container.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  DISPLAY_GRID</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*  --&gt;  p1        text</font>
+<font color ="#0000FF">*  &lt;--  p2        text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+FORM display_grid .
+
+  CALL METHOD go_grid-&gt;set_table_for_first_display
+    EXPORTING
+      is_variant      = gs_variant
+      i_save          = 'X'
+      is_layout       = gs_layout
+    CHANGING
+      it_outtab       = gt_data[]
+      it_fieldcatalog = gt_fcat.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  SET_LAYOUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*  --&gt;  p1        text</font>
+<font color ="#0000FF">*  &lt;--  p2        text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+FORM set_layout .
+
+  gs_layout-zebra       = 'X'.
+  gs_layout-sel_mode    = 'D'.
+  gs_layout-cwidth_opt  = 'X'.
+  gs_variant-report     = sy-repid.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  SET_FIELD_CATALOG</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*  --&gt;  p1        text</font>
+<font color ="#0000FF">*  &lt;--  p2        text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+FORM set_field_catalog .
+
+  CLEAR : gs_fcat, gt_fcat.
+
+  PERFORM append_fcat USING :
+    'X'   'STATS     '    'ICON                '    '     '     '          ',
+    'X'   'REMSG     '    'Return Message      '    '     '     '          ',
+    'X'   'MATNR     '    'Material Code       '    'MARA '     'MATNR     ',
+    ' '   'MAKTX     '    'Material Description'    'MAKT '     'MAKTX     ',
+    ' '   'MTART     '    'Material Type       '    'MARA '     'MTART     ',
+    ' '   'MBRSH     '    'Industy Sector      '    'MARA '     'MBRSH     ',
+    ' '   'WERKS     '    'Plant               '    'MARC '     'WERKS     ',
+    ' '   'LGORT     '    'Storage Location    '    'MARD '     'LGORT     ',
+    ' '   'MEINS     '    'Base Unit of Messure'    'MARA '     'MEINS     ',
+    ' '   'MATKL     '    'Material Group      '    'MARA '     'MATKL     ',
+    ' '   'SPART     '    'Ivision             '    'MARA '     'SPART     ',
+    ' '   'BISMT     '    'Old Material Number '    'MARA '     'BISMT     ',
+    ' '   'MTPOS_MARA'    'GenItemCatGroup     '    'MARA '     'MTPOS_MARA',
+    ' '   'BRGEW     '    'Gross Weight        '    'MARA '     'BRGEW     ',
+    ' '   'NTGEW     '    'Net Weight          '    'MARA '     'NTGEW     ',
+    ' '   'GEWEI     '    'Weight Unit         '    'MARA '     'GEWEI     ',
+    ' '   'TRAGR     '    'Trans. Grp          '    'MAKT '     'TRAGR     ',
+    ' '   'RAUBE     '    'Stroage Conditons   '    'MARA '     'RAUBE     ',
+    ' '   'QMPUR     '    'QM Proc. active     '    'MAKT '     'QMPUR     ',
+    ' '   'KLART     '    'Class Type          '    'RMCLF'     'KLART     ',
+    ' '   'CLASS     '    'Class               '    'RMCLF'     'CLASS     ',
+    ' '   'MTVFP     '    'Availability check  '    'MAKT '     'MTVFP     ',
+    ' '   'LADGR     '    'Loading Grp         '    'MAKT '     'LADGR     ',
+    ' '   'EKGRP     '    'Purchaing Group     '    'MAKT '     'EKGRP     ',
+    ' '   'USEQU     '    'Quota arr. Usage    '    'MARC '     'USEQU     ',
+    ' '   'XCHPF     '    'Batch Management    '    'MARC '     'XCHPF     ',
+    ' '   'KORDB     '    'Source List         '    'MARC '     'KORDB     ',
+    ' '   'DISGR     '    'MRP Group           '    'MAKT '     'DISGR     ',
+    ' '   'DISMM     '    'MRP Type            '    'MARC '     'DISMM     ',
+    ' '   'DISPO     '    'MRP Controller      '    'MARC '     'DISPO     ',
+    ' '   'LGFSB     '    'Storage loc. for EP '    'MARC '     'LGFSB     ',
+    ' '   'DISLS     '    'Lot Size            '    'MAKT '     'DISLS     ',
+    ' '   'BESKZ     '    'Procurement Type    '    'MAKT '     'BESKZ     ',
+    ' '   'SOBSL     '    'Special procurement '    'MARC '     'SOBSL     ',
+    ' '   'FHORI     '    'Sched. Margin Key   '    'MAKT '     'FHORI     ',
+    ' '   'SFEPR     '    'REM Profile         '    'MAKT '     'SFEPR     ',
+    ' '   'STRGR     '    'Strategy Group      '    'MAKT '     'STRGR     ',
+    ' '   'ALTSL     '    'Selection Method    '    'MAKT '     'ALTSL     ',
+    ' '   'SAUFE     '    'Repetitive mfg(REM) '    'MAKT '     'SAUFE     ',
+    ' '   'SBDKZ     '    'Indivisual/Coll     '    'MARC '     'SBDKZ     ',
+    ' '   'PRCTR     '    'Prfit Center        '    'MAKT '     'PRCTR     ',
+    ' '   'SSQSS     '    'QM Contorll Key     '    'MARC '     'SSQSS     ',
+    ' '   'QZGTP     '    'Certificate Type    '    'MAKT '     'QZGTP     ',
+    ' '   'NCOST     '    'Do not Cost         '    'MARC '     'NCOST     ',
+    ' '   'DWERK     '    'Delivering plant    '    'MAKT '     'DWERK     ',
+    ' '   'VRKME     '    'Sales Unit          '    'MAKT '     'VRKME     ',
+    ' '   'KONDM     '    'Materail Pricing.Grp'    'MAKT '     'KONDM     ',
+    ' '   'KTGRM     '    'Acct. Assignment.Grp'    'MAKT '     'KTGRM     ',
+    ' '   'MTPOS     '    'Item Category. Grp  '    'MVKE '     'MTPOS     ',
+    ' '   'MVGR1     '    'Material Group 1    '    'MVKE '     'MVGR1     ',
+    ' '   'MVGR2     '    'Material Group 2    '    'MVKE '     'MVGR2     ',
+    ' '   'MVGR3     '    'Material Group 3    '    'MVKE '     'MVGR3     ',
+    ' '   'MVGR4     '    'Material Group 4    '    'MVKE '     'MVGR4     ',
+    ' '   'MVGR5     '    'Material Group 5    '    'MVKE '     'MVGR5     ',
+    ' '   'ALAND     '    'Country             '    'MAKT '     'ALAND     ',
+    ' '   'TAXM1     '    'TAX Classification  '    'MAKT '     'TAXM1     ',
+    ' '   'LGPBE     '    'Storage Bin         '    'MARD '     'LGPBE     ',
+    ' '   'ART       '    'Inspetion Type      '    'QMAT '     'ART       ',
+    ' '   'AKTIV     '    'Mat Comb is Active  '    'QMAT '     'AKTIV     ',
+    ' '   'BKLAS     '    'Valuation Class     '    'MBEW '     'BKLAS     ',
+    ' '   'HKMAT     '    'Material Origin     '    'MAKT '     'HKMAT     ',
+    ' '   'MLAST     '    'Price Determ        '    'MAKT '     'MLAST     ',
+    ' '   'LGPRO     '    'PProd. Stor.Location'    'MARC '     'LGPRO     ',
+    ' '   'VKORG     '    'Sales Org           '    'MKVE '     'VKORG     ',
+    ' '   'VTWEG     '    'Sales Dis.Channel   '    'MKVE '     'VTWEG     ',
+    ' '   'VALUE_CHAR'    'VALUE_CAHR          '    'MAKT '     'VALUE_CHAR',
+    ' '   'BASIC_VIEW'    'BASIC_VIEW          '    'MAKT '     'VALUE_CHAR',
+    ' '   'BASIC_VIEW'    'BASIC_VIEW          '    'MAKT '     'VALUE_CHAR',
+    ' '   'BASIC_VIEW'    'BASIC_VIEW          '    'MAKT '     'VALUE_CHAR',
+    ' '   'BASIC_VIEW'    'BASIC_VIEW          '    'MAKT '     'VALUE_CHAR',
+    ' '   'BASIC_VIEW'    'BASIC_VIEW          '    'MAKT '     'VALUE_CHAR',
+    ' '   'BASIC_VIEW'    'BASIC_VIEW          '    'MAKT '     'VALUE_CHAR',
+    ' '   'BASIC_VIEW'    'BASIC_VIEW          '    'MAKT '     'VALUE_CHAR',
+    ' '   'BASIC_VIEW'    'BASIC_VIEW          '    'MAKT '     'VALUE_CHAR'.
+
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  APPEND_FCAT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*      --&gt;P_0328   text</font>
+<font color ="#0000FF">*      --&gt;P_0329   text</font>
+<font color ="#0000FF">*      --&gt;P_0330   text</font>
+<font color ="#0000FF">*      --&gt;P_0331   text</font>
+<font color ="#0000FF">*      --&gt;P_0332   text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+FORM append_fcat  USING    p_key p_field p_text p_ref_table p_ref_field.
+
+  gs_fcat-key       = p_key.
+  gs_fcat-fieldname = p_field.
+  gs_fcat-coltext   = p_text.
+  gs_fcat-ref_table = p_ref_table.
+  gs_fcat-ref_field = p_ref_field.
+
+  CASE p_field.
+    WHEN 'STATS'.
+      gs_fcat-icon =  'X'.
+  ENDCASE.
+
+  APPEND gs_fcat TO gt_fcat.
+  CLEAR  gs_fcat.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  SAVE_DATA_ZPPG0320_ZM4</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*  --&gt;  p1        text</font>
+<font color ="#0000FF">*  &lt;--  p2        text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+FORM save_data_zppg0320_ZM4 .
+
+  DATA : ls_0320 TYPE zppg0320_ZM4.
+
+  MOVE-CORRESPONDING gt_i TO ls_0320.
+  ls_0320-mtart = gv_mtart.
+  ls_0320-werks = gv_werks.
+
+  MODIFY zppg0320_ZM4 FROM ls_0320.
+
+  IF sy-subrc NE 0.
+    MESSAGE s000 WITH '업로드가 실패하였습니다.' DISPLAY LIKE 'E'.
+    EXIT.
+  ELSE.
+    MESSAGE s000 WITH '정상적으로 저장되었습니다.'.
+<font color ="#0000FF">*    PERFORM clear_scr200_data.</font>
+  ENDIF.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  GET_DATA_ZPPG0320_ZM4</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*  --&gt;  p1        text</font>
+<font color ="#0000FF">*  &lt;--  p2        text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+FORM get_data_zppg0320_ZM4 .
+
+  CLEAR : gt_i.
+
+  SELECT SINGLE *
+    INTO CORRESPONDING FIELDS OF gt_i
+    FROM zppg0320_ZM4
+   WHERE mtart EQ gv_mtart
+     AND werks EQ gv_werks.
+
+  IF sy-subrc NE 0.
+    MESSAGE s000 WITH '데이터가 존재하지 않습니다.' DISPLAY LIKE 'E'.
+<font color ="#0000FF">*    LEAVE LIST-PROCESSING.</font>
+  ENDIF.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  SET_COMPLETE_IT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*  --&gt;  p1        text</font>
+<font color ="#0000FF">*  &lt;--  p2        text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+FORM set_complete_it .
+
+<font color ="#0000FF">*-- SCREEN 0100 출력 전에 GT_DATA를 완벽하게 구성해야 한다.</font>
+<font color ="#0000FF">*    SORT gt_data BY mtart werks.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*    LOOP AT gt_data.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*      CLEAR : gv_mtart, gv_werks.</font>
+<font color ="#0000FF">*      gv_mtart = gt_data-mtart.</font>
+<font color ="#0000FF">*      gv_werks = gt_data-werks.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*      PERFORM get_data_zppg0320_ZM4.</font>
+<font color ="#0000FF">*      IF gt_i IS NOT INITIAL.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*        MOVE-CORRESPONDING gt_i To gt_data.</font>
+<font color ="#0000FF">*        MODIFY gt_data TRANSPORTING MTART WERKS MTPOS_MARA  VRKME ALAND TAXM1 DWERK KONDM KTGRM MTPOS TRAGR LADGR EKGRP DISGR</font>
+<font color ="#0000FF">*                                    DISMM DISPO DISLS BESKZ FHORI PERKZ STRGR MTVFP ALTSL SBDKZ SAUFT SFEPR QMPUR MLMAA</font>
+<font color ="#0000FF">*                                    MLAST EKALR HKMAT PRCTR BASIC_VIEW SALES_VIEW PURCHASE_VIEW MRP_VIEW PNST_VIEW QUALITY_VIEW ANC_VIEW KZBED LOSGR.</font>
+<font color ="#0000FF">*        CLEAR : gt_data, gt_i.</font>
+<font color ="#0000FF">*      ENDIF.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*    ENDLOOP.</font>
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  CLEAR_DATA</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*  --&gt;  p1        text</font>
+<font color ="#0000FF">*  &lt;--  p2        text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+FORM clear_scr200_data .
+
+  CLEAR : gv_mtart, gv_werks, gt_i.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  GET_SCR200_DATA</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*  --&gt;  p1        text</font>
+<font color ="#0000FF">*  &lt;--  p2        text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+FORM get_scr200_data .
+
+  SELECT *
+    INTO CORRESPONDING FIELDS OF TABLE gt_0320t
+    FROM zppg0320_ZM4.
+
+  SORT gt_0320t BY mtart werks.   "SAP 서버가 처리를 해준다 / SELECT 문에서 하게 되면 DB 차원에서 한다.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  MODIFY_GT_DATA</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*  --&gt;  p1        text</font>
+<font color ="#0000FF">*  &lt;--  p2        text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+FORM modify_gt_data .
+  LOOP AT gt_data.
+    READ TABLE gt_0320t WITH KEY mtart = gt_data-mtart
+                                 werks = gt_data-werks
+                        INTO gs_0320t
+                        BINARY SEARCH.
+    IF sy-subrc EQ 0.
+      MOVE-CORRESPONDING gs_0320t TO gt_data.
+      MODIFY gt_data TRANSPORTING mtart werks mtpos_mara mbrsh vrkme aland taxm1 dwerk kondm ktgrm mtpos tragr ladgr ekgrp disgr
+                                  disls beskz fhori perkz strgr mtvfp altsl sbdkz sauft sfepr qmpur mlmaa
+                                  mlast ekalr hkmat prctr basic_view sales_view purchase_view mrp_view pnst_view quality_view acn_view
+                                  kzbed losgr zplp1 zpld1 .
+      CLEAR : gs_0320t, gt_data.
+    ENDIF.
+  ENDLOOP.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  CREATE_MATERIAL_BY_BAPI</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*  --&gt;  p1        text</font>
+<font color ="#0000FF">*  &lt;--  p2        text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+FORM create_material_by_bapi .
+
+  DATA : ls_headdata       TYPE bapimathead,
+         ls_clinetdata     TYPE bapi_mara,
+         ls_clientdatax    TYPE bapi_marax,
+         ls_desc           TYPE TABLE OF bapi_makt WITH HEADER LINE,
+         ls_plantdata      TYPE bapi_marc,
+         ls_plantdatax     TYPE bapi_marcx,
+         ls_stordata       TYPE bapi_mard,
+         ls_stordatax      TYPE bapi_mardx,
+         ls_salesdata      TYPE bapi_mvke,
+         ls_salesdatax     TYPE bapi_mvkex,
+         ls_valuationdata  TYPE bapi_mbew,
+         ls_valuationdatax TYPE bapi_mbewx.
+<font color ="#0000FF">*         ls_TAXCLASSIFICATIONS TYPE TABLE OF BAPI_MLAN WITH HEADER LINE.</font>
+
+  DATA : ls_return       TYPE bapiret2.
+
+  LOOP AT gt_data.
+
+<font color ="#0000FF">*-- Head Data Set</font>
+    ls_headdata-material      = gt_data-matnr.
+    "ls_headdata-ind_sector    = gt_data-mbrsh.
+    ls_headdata-ind_sector    = 'M'.
+    ls_headdata-matl_type     = gt_data-mtart.
+    ls_headdata-basic_view    = gt_data-basic_view.
+    ls_headdata-sales_view    = gt_data-sales_view.
+    ls_headdata-purchase_view = gt_data-purchase_view.
+    ls_headdata-mrp_view      = gt_data-mrp_view.
+    ls_headdata-storage_view  = gt_data-pnst_view.
+    ls_headdata-quality_view  = gt_data-quality_view.
+    ls_headdata-account_view  = gt_data-acn_view.
+    ls_headdata-cost_view     = gt_data-acn_view.
+
+    ls_desc-langu = 2.
+    ls_desc-matl_desc = gt_data-maktx.
+    APPEND ls_desc.
+
+
+    ls_clinetdata-base_uom      = gt_data-meins.      "Base Unit of Measure.
+    ls_clinetdata-matl_group    = gt_data-matkl.      "Material Group.
+    ls_clinetdata-division      = gt_data-spart.      "Division.
+    ls_clinetdata-old_mat_no    = gt_data-bismt.      "Old material number.
+    ls_clinetdata-item_cat      = gt_data-mtpos_mara. "General item cate grp.
+    ls_clinetdata-net_weight    = gt_data-ntgew.      "Net Weight.
+    ls_clinetdata-unit_of_wt    = gt_data-gewei.      "Weight Unit.
+    ls_clinetdata-trans_grp     = gt_data-tragr.      "Transportation Group.
+    ls_clinetdata-stor_conds    = gt_data-raube.      "Storage conditions.
+    ls_clinetdata-qm_procmnt    = gt_data-qmpur.      "QM in Proc Active.
+    ls_clinetdata-mat_grp_sm    = gt_data-magrv.        "Matl grp pack.matls
+    ls_clinetdata-sh_mat_typ    = gt_data-vhart.        "Packaging mat. Type
+
+    ls_clientdatax-base_uom     = 'X'.
+    ls_clientdatax-matl_group   = 'X'.
+    ls_clientdatax-division     = 'X'.
+    ls_clientdatax-old_mat_no   = 'X'.
+    ls_clientdatax-item_cat     = 'X'.
+    ls_clientdatax-net_weight   = 'X'.
+    ls_clientdatax-unit_of_wt   = 'X'.
+    ls_clientdatax-trans_grp    = 'X'.
+    ls_clientdatax-stor_conds   = 'X'.
+    ls_clientdatax-qm_procmnt   = 'X'.
+    ls_clientdatax-mat_grp_sm = 'X'.
+    ls_clientdatax-sh_mat_typ = 'X'.
+
+
+<font color ="#0000FF">* PLANTDATA -------------------------------------------------------.</font>
+    ls_plantdata-plant         = gt_data-werks.      "Plant.
+    ls_plantdata-loadinggrp    = gt_data-ladgr.      "Loading Group.
+    ls_plantdata-pur_group     = gt_data-ekgrp.      "Purchasing Group.
+    ls_plantdata-quotausage    = gt_data-usequ.      "Quota arrg' usage.
+    ls_plantdata-batch_mgmt    = gt_data-xchpf.      "Batch indicator.
+    ls_plantdata-sourcelist    = gt_data-kordb.      "Indicator: Srce list.
+    ls_plantdata-mrp_group     = gt_data-disgr.      "MRP Group.
+    ls_plantdata-mrp_type      = gt_data-dismm.      "MRP Type.
+    ls_plantdata-mrp_ctrler    = gt_data-dispo.      "MRP Controller.
+    ls_plantdata-lotsizekey    = gt_data-disls.      "Lot size.
+    ls_plantdata-proc_type     = gt_data-beskz.      "Procurement Type.
+    ls_plantdata-spproctype    = gt_data-sobsl.      "Special proc. type.
+    ls_plantdata-plnd_delry    = gt_data-plifz.      "Planned Deliv. Time.
+    "ls_plantdata-plnd_delry    = 0.      "Planned Deliv. Time.
+    ls_plantdata-sm_key        = gt_data-fhori.      "Sch Margin Key.
+    ls_plantdata-repmanprof    = gt_data-sfepr.      "Rep manufac profile.
+    ls_plantdata-plan_strgp    = gt_data-strgr.      "PLAN strategy group.
+    ls_plantdata-alt_bom_id    = gt_data-altsl.      "Alternative  BOM.
+    ls_plantdata-rep_manuf     = gt_data-sauft.      "Ind.: Rep. mfg~.
+    ls_plantdata-dep_req_id    = gt_data-sbdkz.      "Dependent req ind.
+<font color ="#0000FF">*    ls_plantdata-profit_ctr    = gt_data-prctr.      "Profit Center.</font>
+
+    CALL FUNCTION 'CONVERSION_EXIT_ALPHA_INPUT'
+      EXPORTING
+        input         = gt_data-prctr
+     IMPORTING
+       OUTPUT        = ls_plantdata-profit_ctr.
+
+    ls_plantdata-ctrl_key      = gt_data-ssqss.      "Control Key for QMP.
+    ls_plantdata-cert_type     = gt_data-qzgtp.      "Certificate Type.
+    ls_plantdata-no_costing    = gt_data-ncost.      "Do Not Cost.
+    ls_plantdata-availcheck    = gt_data-mtvfp.      "AVAILCHECK
+    ls_plantdata-sloc_exprc    = gt_data-lgfsb.      "Storage loc. for EP.
+    ls_plantdata-inhseprodt    = gt_data-dzeit.       "In-house production time
+    ls_plantdata-grp_reqmts    =  gt_data-kzbed.       "Indicator for Requirements Grouping
+    ls_plantdata-lot_size      = gt_data-losgr.
+    ls_plantdata-jit_relvt     = gt_data-fabkz.      "JIT delivery sched.
+    ls_plantdata-iss_st_loc    = gt_data-lgpro.     "Prod. stor. Location(2016.01.11 ADD)
+<font color ="#0000FF">*      PLANTDATA Dedscription -------------------------------------------------------.</font>
+    ls_plantdatax-plant        = gt_data-werks.
+    ls_plantdatax-loadinggrp    ='X'.
+    ls_plantdatax-pur_group     ='X'.
+    ls_plantdatax-quotausage    ='X'.
+    ls_plantdatax-batch_mgmt    ='X'.
+    ls_plantdatax-sourcelist    ='X'.
+    ls_plantdatax-mrp_group     ='X'.
+    ls_plantdatax-mrp_type      ='X'.
+    ls_plantdatax-mrp_ctrler    ='X'.
+    ls_plantdatax-lotsizekey    ='X'.
+    ls_plantdatax-proc_type     ='X'.
+    ls_plantdatax-spproctype    ='X'.
+    ls_plantdatax-plnd_delry    ='X'.
+    ls_plantdatax-sm_key        ='X'.
+    ls_plantdatax-repmanprof    ='X'.
+    ls_plantdatax-plan_strgp    ='X'.
+    ls_plantdatax-alt_bom_id    ='X'.
+    ls_plantdatax-rep_manuf     ='X'.
+    ls_plantdatax-dep_req_id    ='X'.
+    ls_plantdatax-profit_ctr    ='X'.
+    ls_plantdatax-ctrl_key      ='X'.
+    ls_plantdatax-cert_type     ='X'.
+    ls_plantdatax-no_costing    ='X'.
+    ls_plantdatax-availcheck    ='X'.
+    ls_plantdatax-sloc_exprc    ='X'.
+    ls_plantdatax-inhseprodt    ='X'.
+    ls_plantdatax-grp_reqmts    ='X'.
+    ls_plantdatax-lot_size      ='X'.
+    ls_plantdatax-jit_relvt     ='X'.
+    ls_plantdatax-iss_st_loc    ='X'.
+
+
+<font color ="#0000FF">*      STORAGELOCATIONDATA ---------------------------------------------.</font>
+    ls_stordata-plant         = gt_data-werks.      "Plant.
+    ls_stordata-stge_loc      = gt_data-lgort.      "Storage Location.
+    ls_stordata-stge_bin      = gt_data-lgpbe.      "Storage Bin.
+
+    ls_stordatax-plant        = gt_data-werks.
+    ls_stordatax-stge_loc     = gt_data-lgort.
+    ls_stordatax-stge_bin     = 'X'.
+
+<font color ="#0000FF">* VALUTATION DATA</font>
+    ls_valuationdata-val_area      = gt_data-werks.      "Plant.
+    ls_valuationdata-price_ctrl    = 'S'.
+    ls_valuationdata-price_unit    = 1.
+    ls_valuationdata-val_class     = gt_data-bklas.      "Valuation Class.
+    ls_valuationdata-orig_mat      = gt_data-hkmat.      "Mat-related origin.
+    ls_valuationdata-ml_settle     = gt_data-mlast.      "Mat Price Determ.
+    ls_valuationdata-plndprice1    = gt_data-zplp1.
+    ls_valuationdata-plndprdate1    = gt_data-zpld1.
+
+<font color ="#0000FF">*    ls_valuationdata-price_unit    = '1000'.   "20150724 추가</font>
+<font color ="#0000FF">*    ls_valuationdata-pr_unit_pp    = '1000'.    "20150724 추가</font>
+
+    ls_valuationdatax-val_area     = gt_data-werks.      "Plant.
+    ls_valuationdatax-price_ctrl    = 'X'.
+    ls_valuationdatax-price_unit    = 'X'.
+    ls_valuationdatax-val_class    = 'X'.
+    ls_valuationdatax-orig_mat     = 'X'.
+    ls_valuationdatax-ml_settle    = 'X'.
+    ls_valuationdatax-plndprice1    = 'X'.
+    ls_valuationdatax-plndprdate1    = 'X'.
+<font color ="#0000FF">*    ls_valuationdatax-price_unit   = 'X'.</font>
+<font color ="#0000FF">*    ls_valuationdatax-pr_unit_pp   = 'X'.</font>
+
+
+<font color ="#0000FF">*   SALES VIEW DATA ----------------------</font>
+
+<font color ="#0000FF">*    DATA : lv_cnt(2) VALUE '10'.</font>
+<font color ="#0000FF">*    DATA : lv_chan(2).</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*    IF ls_headdata-sales_view  IS NOT INITIAL.</font>
+<font color ="#0000FF">*      DO lv_cnt TIMES.</font>
+<font color ="#0000FF">*        IF sy-index = '1' OR sy-index = '3' OR sy-index = '8' OR sy-index = '9' .</font>
+    ls_salesdata-sales_org     = gt_data-vkorg.    "SK10      "Sales Organization.
+    ls_salesdata-distr_chan    = gt_data-vtweg.      "Distribution Channel.
+    ls_salesdata-delyg_plnt    = gt_data-dwerk.      "Delivering Plant.
+    ls_salesdata-sales_unit    = gt_data-vrkme.      "Sales unit.
+    ls_salesdata-mat_pr_grp    = gt_data-kondm.      "Mat Pricing Group.
+    ls_salesdata-acct_assgt    = gt_data-ktgrm.      "Accnt asgn group mat.
+    ls_salesdata-item_cat      = gt_data-mtpos.      "Item cat grp mat.
+    ls_salesdata-matl_grp_1    = gt_data-mvgr1.      "Material group 1
+    ls_salesdata-matl_grp_2    = gt_data-mvgr2.      "Material group 2
+    ls_salesdata-matl_grp_3    = gt_data-mvgr3.      "Material group 3
+    ls_salesdata-matl_grp_4    = gt_data-mvgr4.      "Material group 4
+    ls_salesdata-matl_grp_5    = gt_data-mvgr5.      "Material group 5
+
+    ls_salesdatax-sales_org    = gt_data-vkorg.      "Sales Organization.
+    ls_salesdatax-distr_chan   = gt_data-vtweg.
+    ls_salesdatax-delyg_plnt   = 'X'.
+    ls_salesdatax-sales_unit   = 'X'.
+    ls_salesdatax-mat_pr_grp   = 'X'.
+    ls_salesdatax-acct_assgt   = 'X'.
+    ls_salesdatax-item_cat     = 'X'.
+    ls_salesdatax-matl_grp_1   = 'X'.
+    ls_salesdatax-matl_grp_2   = 'X'.
+    ls_salesdatax-matl_grp_3   = 'X'.
+    ls_salesdatax-matl_grp_4   = 'X'.
+    ls_salesdatax-matl_grp_5   = 'X'.
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*          CALL FUNCTION 'BAPI_MATERIAL_SAVEDATA'</font>
+<font color ="#0000FF">*            EXPORTING</font>
+<font color ="#0000FF">*              headdata             = ls_headdata</font>
+<font color ="#0000FF">*              clientdata           = ls_clinetdata</font>
+<font color ="#0000FF">*              clientdatax          = ls_clientdatax</font>
+<font color ="#0000FF">*              plantdata            = ls_plantdata</font>
+<font color ="#0000FF">*              plantdatax           = ls_plantdatax</font>
+<font color ="#0000FF">*              storagelocationdata  = ls_stordata</font>
+<font color ="#0000FF">*              storagelocationdatax = ls_stordatax</font>
+<font color ="#0000FF">*              valuationdata        = ls_valuationdata</font>
+<font color ="#0000FF">*              valuationdatax       = ls_valuationdatax</font>
+<font color ="#0000FF">*              salesdata            = ls_salesdata</font>
+<font color ="#0000FF">*              salesdatax           = ls_salesdatax</font>
+<font color ="#0000FF">*            IMPORTING</font>
+<font color ="#0000FF">*              return               = ls_return</font>
+<font color ="#0000FF">*            TABLES</font>
+<font color ="#0000FF">*              materialdescription  = ls_desc[].</font>
+<font color ="#0000FF">*        ENDIF.</font>
+<font color ="#0000FF">*      ENDDO.</font>
+<font color ="#0000FF">*    ENDIF.</font>
+    CALL FUNCTION 'BAPI_MATERIAL_SAVEDATA'
+      EXPORTING
+        headdata             = ls_headdata
+        clientdata           = ls_clinetdata
+        clientdatax          = ls_clientdatax
+        plantdata            = ls_plantdata
+        plantdatax           = ls_plantdatax
+        storagelocationdata  = ls_stordata
+        storagelocationdatax = ls_stordatax
+        valuationdata        = ls_valuationdata
+        valuationdatax       = ls_valuationdatax
+        salesdata            = ls_salesdata
+        salesdatax           = ls_salesdatax
+      IMPORTING
+        return               = ls_return
+      TABLES
+        materialdescription  = ls_desc[].
+
+    IF ls_return-type EQ 'S' .
+      CALL FUNCTION 'BAPI_TRANSACTION_COMMIT'
+        EXPORTING
+          wait = 'X'.
+      gt_data-stats = icon_green_light.
+
+    ELSEIF ls_return-type EQ 'W'.               " * 워닝은 에러처리를 하면 안된다.
+
+    ELSE.
+      CALL FUNCTION 'BAPI_TRANSACTION_ROLLBACK'.
+      gt_data-remsg = ls_return-message.
+      gt_data-stats = icon_red_light.
+    ENDIF.
+
+    MODIFY gt_data TRANSPORTING remsg stats.
+    CLEAR : ls_headdata, ls_clinetdata, ls_clientdatax, ls_return,
+            ls_desc, ls_desc[], gt_data.
+
+  ENDLOOP.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  SET_HEADDATA</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*  --&gt;  p1        text</font>
+<font color ="#0000FF">*  &lt;--  p2        text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+FORM set_headdata USING p_data STRUCTURE gt_data .
+
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  SET_CLIENTDATA</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*      --&gt;P_GT_DATA  text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+FORM set_clientdata  USING    p_data STRUCTURE gt_data.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  SET_CLIENTDATAX</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*  --&gt;  p1        text</font>
+<font color ="#0000FF">*  &lt;--  p2        text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+FORM set_clientdatax .
+
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  SET_DESCRIPTION</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*      --&gt;P_GT_DATA  text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+FORM set_description  USING  p_data STRUCTURE gt_data.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  GRID_REFRESH</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*  --&gt;  p1        text</font>
+<font color ="#0000FF">*  &lt;--  p2        text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+FORM grid_refresh.
+
+  gs_stable-row = 'X'.
+  gs_stable-col = 'X'.
+  CALL METHOD go_grid-&gt;refresh_table_display
+    EXPORTING
+      is_stable      = gs_stable
+      i_soft_refresh = space.
+
+ENDFORM.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750
+</font>
+</body>
+</html>
