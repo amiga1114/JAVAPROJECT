@@ -1,0 +1,232 @@
+*&---------------------------------------------------------------------*
+*&  Include           ZEDR22_29_O01
+*&---------------------------------------------------------------------*
+*&---------------------------------------------------------------------*
+*&      Module  STATUS_0100  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE status_0100 OUTPUT.
+  SET PF-STATUS '0100'.
+  SET TITLEBAR '0100'.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  SET_FIELD  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE set_field OUTPUT.
+  CLEAR : gt_fcat, gs_fcat.
+
+  PERFORM set_fcat USING : 'X' 'BUKRS'  '회사코드'   'ZTPROJ22_01',
+                           'X' 'WERKS'  '플랜트'     'ZTPROJ22_01',
+                           'X' 'MATNR'  '자재코드'   'ZTPROJ22_01',
+                           ' ' 'KOSTL'  '코드트센터' 'ZTPROJ22_01',
+                           ' ' 'PRCTR'  '손익센터'   'ZTPROJ22_01',
+                           ' ' 'MTART'  '자재타입'   'ZTPROJ22_01',
+                           ' ' 'MATKL'  '자재그룹'   'ZTPROJ22_01',
+                           ' ' 'MENGE'  '수량'       'ZTPROJ22_01',
+                           ' ' 'MEINS'  '단위'       'ZTPROJ22_01',
+                           ' ' 'DMBTR'  '금액'       'ZTPROJ22_01',
+                           ' ' 'WAERS'  '통화키'     'ZTPROJ22_01'.
+
+
+  gs_layout-zebra      = 'X'.
+  gs_layout-sel_mode   = 'D'.
+  gs_layout-cwidth_opt = 'X'.
+
+  gs_variant-report = sy-repid.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  DISPLAY_SCREEN  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE display_screen OUTPUT.
+IF go_container IS NOT BOUND.
+   CREATE OBJECT go_container
+     EXPORTING
+       container_name              = 'GO_CONTAINER'.
+
+    CREATE OBJECT go_grid
+      EXPORTING
+        i_parent = go_container.
+
+    CALL METHOD go_grid->set_table_for_first_display
+      EXPORTING
+        is_variant      = gs_variant
+        i_save          = 'X'
+        i_default       = 'X'
+        is_layout       = gs_layout
+      CHANGING
+        it_outtab       = gt_data[]
+        it_fieldcatalog = gt_fcat.
+  ELSE.
+    PERFORM refresh_grid.
+  ENDIF.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  ACTIVE_TAB  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE active_tab OUTPUT.
+  go_main_tab-activetab = gv_pressedtab.
+
+  CASE gv_pressedtab.
+    WHEN '1STTAB'.
+      gv_subscreen = '0101'.
+    WHEN '2NDTAB'.
+      gv_subscreen = '0102'.
+    WHEN '3RDTAB'.
+      gv_subscreen = '0103'.
+  ENDCASE.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  DIPLAY_SCREEN  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE diplay_screen OUTPUT.
+IF go_container IS NOT BOUND.
+   CREATE OBJECT go_container
+     EXPORTING
+       container_name              = 'GO_CONTAINER'.
+
+    CREATE OBJECT go_grid
+      EXPORTING
+        i_parent = go_container.
+
+    CALL METHOD go_grid->set_table_for_first_display
+      EXPORTING
+        is_variant      = gs_variant
+        i_save          = 'X'
+        i_default       = 'X'
+        is_layout       = gs_layout
+      CHANGING
+        it_outtab       = gt_data[]
+        it_fieldcatalog = gt_fcat.
+  ELSE.
+    PERFORM refresh_grid.
+  ENDIF.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  CREATE_EDIT  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE create_edit OUTPUT.
+   IF go_container2 IS NOT BOUND.
+    CREATE OBJECT go_container2
+      EXPORTING
+        container_name = 'GO_CONTAINER2'.
+
+    CREATE OBJECT go_edit2
+      EXPORTING
+        parent = go_container2.
+  ENDIF.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  SET_FIELD1  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE set_field1 OUTPUT.
+  CLEAR : gt_fcat1, gs_fcat1.
+
+  PERFORM set_fcat1 USING : 'X' 'SEQ'       '순번'   'ZTPROJ22_02',
+                            'X' 'NAME'      '이름'   'ZTPROJ22_02',
+                            ' ' 'CONTENTS'  '내용'   'ZTPROJ22_02'.
+
+
+
+  gs_layout-zebra      = 'X'.
+  gs_layout-sel_mode   = 'D'.
+  gs_layout-cwidth_opt = 'X'.
+
+  gs_variant-report = sy-repid.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  DIPLAY_SCREEN1  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE diplay_screen1 OUTPUT.
+  IF go_container3 IS NOT BOUND.
+   CREATE OBJECT go_container3
+     EXPORTING
+       container_name              = 'GO_CONTAINER3'.
+
+    CREATE OBJECT go_grid3
+      EXPORTING
+        i_parent = go_container3.
+
+    CLEAR : gs_toolbar, gt_toolbar.
+    PERFORM exclude_toolbar.
+
+    IF go_handler IS NOT BOUND.
+      CREATE OBJECT go_handler.
+    ENDIF.
+
+    SET HANDLER : go_handler->double_click FOR go_grid3.
+
+
+    CALL METHOD go_grid3->set_table_for_first_display
+      EXPORTING
+        is_variant      = gs_variant
+        i_save          = 'X'
+        i_default       = 'X'
+        is_layout       = gs_layout
+      CHANGING
+        it_outtab       = gt_data2[]
+        it_fieldcatalog = gt_fcat1.
+  ELSE.
+    PERFORM refresh_grid3.
+  ENDIF.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  GET_DATA1  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE get_data1 OUTPUT.
+  PERFORM GET_DATA1.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  DIPLAY_SCREEN2  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE diplay_screen2 OUTPUT.
+    IF go_container4 IS NOT BOUND.
+   CREATE OBJECT go_container4
+     EXPORTING
+       container_name              = 'GO_CONTAINER4'.
+
+    CREATE OBJECT go_edit4
+      EXPORTING
+        parent = go_container4.
+
+     CALL METHOD go_edit4->set_text_as_r3table
+      EXPORTING
+        table                  = gt_TEXT[]
+      EXCEPTIONS
+        error_dp        = 1
+        error_dp_create = 2
+        others          = 3.
+
+CALL METHOD go_edit4->set_readonly_mode.
+
+CALL METHOD go_edit4->set_toolbar_mode
+  EXPORTING
+    toolbar_mode           = 0
+  EXCEPTIONS
+    error_cntl_call_method = 1
+    invalid_parameter      = 2
+    others                 = 3.
+
+  ENDIF.
+ENDMODULE.
+
+----------------------------------------------------------------------------------
+Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750

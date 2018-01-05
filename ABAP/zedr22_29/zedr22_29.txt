@@ -1,0 +1,51 @@
+*&---------------------------------------------------------------------*
+*& Report  ZEDR22_29
+*&
+*&---------------------------------------------------------------------*
+*&
+*&
+*&---------------------------------------------------------------------*
+
+INCLUDE zedr22_29_top                           .    " global Data
+
+INCLUDE zedr22_29_cls                           .  " LOCAL CLASS
+INCLUDE zedr22_29_scr                           .  " SELECTION SCREEN
+INCLUDE zedr22_29_o01                           .  " PBO-Modules
+INCLUDE zedr22_29_i01                           .  " PAI-Modules
+INCLUDE zedr22_29_f01                           .  " FORM-Routines
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR s_bukrs-low.
+  PERFORM get_bukrs USING 'S_BUKRS-LOW'.
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR s_bukrs-HIGH.
+  PERFORM get_bukrs USING 'S_BUKRS-HIGH'.
+
+START-OF-SELECTION.
+
+  PERFORM get_data.
+
+  CALL SCREEN '0100'.
+
+*GUI Texts
+*----------------------------------------------------------
+* 0100 --> PROJECT2 STATUS
+
+*Text elements
+*----------------------------------------------------------
+* T01 검색조건
+
+
+*Selection texts
+*----------------------------------------------------------
+* S_BUKRS D       .
+* S_WERKS D       .
+
+
+*Messages
+*----------------------------------------------------------
+*
+* Message class: OO
+*000   & & & &
+
+----------------------------------------------------------------------------------
+Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750
