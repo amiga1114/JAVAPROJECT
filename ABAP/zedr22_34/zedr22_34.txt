@@ -1,0 +1,34 @@
+*&---------------------------------------------------------------------*
+*& Report  ZEDR22_34
+*&
+*&---------------------------------------------------------------------*
+*&
+*&
+*&---------------------------------------------------------------------*
+
+INCLUDE zedr22_34_top                           .    " global Data
+
+INCLUDE zedr22_34_cls                           .  " CLASS
+INCLUDE zedr22_34_scr                           .  " SELECTION SCREEN
+INCLUDE zedr22_34_o01                           .  " PBO-Modules
+INCLUDE zedr22_34_i01                           .  " PAI-Modules
+INCLUDE zedr22_34_f01                           .  " FORM-Routines
+
+
+START-OF-SELECTION.
+  PERFORM get_data.
+  CALL SCREEN '0100'.
+
+*GUI Texts
+*----------------------------------------------------------
+* 0100 --> ALV수행평가
+
+
+*Selection texts
+*----------------------------------------------------------
+* S_BLART D       .
+* S_BUKRS D       .
+* S_GJAHR D       .
+
+----------------------------------------------------------------------------------
+Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750
