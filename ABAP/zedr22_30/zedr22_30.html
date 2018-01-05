@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZEDR22_30</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZEDR22_30</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  gateway_practice_0929</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report  ZEDR22_30</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+include <a href ="zedr22_30_top.html">ZEDR22_30_TOP</a>.    " global Data
+
+ include <a href ="zedr22_30_scr.html">ZEDR22_30_SCR</a>.  " SELECTION SCREEN
+ include <a href ="zedr22_30_o01.html">ZEDR22_30_O01</a>.  " PBO-Modules
+ include <a href ="zedr22_30_i01.html">ZEDR22_30_I01</a>.  " PAI-Modules
+ include <a href ="zedr22_30_f01.html">ZEDR22_30_F01</a>.  " FORM-Routines
+
+ AT SELECTION-SCREEN ON VALUE-REQUEST FOR s_bukrs-low.
+  PERFORM get_bukrs USING 'S_BUKRS-LOW'.
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR s_bukrs-HIGH.
+  PERFORM get_bukrs USING 'S_BUKRS-HIGH'.
+
+ START-OF-SELECTION.
+
+ PERFORM GET_DATA.
+
+ CALL SCREEN '0100'.
+
+<font color ="#0000FF">*GUI Texts</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* 0100 --&gt; GATAWYA PRACTICE 0929 STATUS</font>
+
+<font color ="#0000FF">*Text elements</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* 001 검색조건</font>
+<font color ="#0000FF">* T01 검색조건</font>
+
+
+<font color ="#0000FF">*Selection texts</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* S_BUKRS D       .</font>
+
+
+<font color ="#0000FF">*Messages</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">* Message class: OO</font>
+<font color ="#0000FF">*000   & & & &</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750
+</font>
+</body>
+</html>
