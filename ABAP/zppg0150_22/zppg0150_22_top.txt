@@ -1,0 +1,35 @@
+*&---------------------------------------------------------------------*
+*& Include ZPPG0150_22_TOP                                   Report ZPPG0150_22
+*&
+*&---------------------------------------------------------------------*
+
+*-- internal table 선언
+*DATA : gt_data TYPE TABLE OF zppg0150t WITH HEADER LINE.
+DATA: BEGIN OF GT_DATA OCCURS 0.
+      INCLUDE STRUCTURE ZPPG0150T.
+DATA: VERID TYPE VERID,
+      STAT TYPE C LENGTH 4,
+      END OF GT_DATA.
+
+*-- alv 관련 변수
+DATA : go_doc_cont  TYPE REF TO cl_gui_docking_container.
+DATA : go_grid      TYPE REF TO cl_gui_alv_grid.
+
+DATA : gs_layo TYPE lvc_s_layo,
+       gs_fcat TYPE lvc_s_fcat,
+       gt_fcat TYPE lvc_t_fcat.
+
+
+*--글로벌 변수
+DATA : gv_okcode TYPE sy-ucomm.
+
+*-- 1000
+SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME. "with frame : 테두리 생성 용어
+
+PARAMETERS : p_werks TYPE zppg0150t-werks,
+             p_budat TYPE zppg0150t-budat.
+
+SELECTION-SCREEN END OF BLOCK b1.
+
+----------------------------------------------------------------------------------
+Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750

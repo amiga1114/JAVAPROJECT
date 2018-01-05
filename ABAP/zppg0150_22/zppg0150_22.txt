@@ -1,0 +1,48 @@
+*&---------------------------------------------------------------------*
+*& Report  ZPPG0150_22
+*&
+*&---------------------------------------------------------------------*
+*&
+*&
+*&---------------------------------------------------------------------*
+REPORT zppg0150_22 MESSAGE-ID oo.
+
+INCLUDE zppg0150_22_top                         .    " global Data
+INCLUDE zppg0150_22_o01                         .  " PBO-Modules
+INCLUDE zppg0150_22_i01                         .  " PAI-Modules
+INCLUDE zppg0150_22_f01                         .  " FORM-Routines
+
+START-OF-SELECTION.
+  PERFORM get_data.
+
+  PERFORM modify_data.
+
+  PERFORM process_data.
+
+  PERFORM save_data.
+
+  IF gt_data[] IS NOT INITIAL.
+    CALL SCREEN '0100'.
+  ELSE.
+    MESSAGE s000 WITH 'Data not found.' DISPLAY LIKE 'E'.
+  ENDIF.
+
+*GUI Texts
+*----------------------------------------------------------
+* T0100 --> 백플러쉬 처리
+
+
+*Selection texts
+*----------------------------------------------------------
+* P_BUDAT D       .
+* P_WERKS D       .
+
+
+*Messages
+*----------------------------------------------------------
+*
+* Message class: OO
+*000   & & & &
+
+----------------------------------------------------------------------------------
+Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750
