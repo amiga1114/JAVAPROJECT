@@ -1,0 +1,26 @@
+*&---------------------------------------------------------------------*
+*& Report  ZEDR22_27
+*&
+*&---------------------------------------------------------------------*
+*&
+*&
+*&---------------------------------------------------------------------*
+
+INCLUDE ZEDR22_27_TOP                           .    " global Data
+
+ INCLUDE ZEDR22_27_O01                           .  " PBO-Modules
+ INCLUDE ZEDR22_27_I01                           .  " PAI-Modules
+ INCLUDE ZEDR22_27_F01                           .  " FORM-Routines
+
+ START-OF-SELECTION.
+
+ PERFORM GET_dATA.
+
+ CALL SCREEN '0100'.
+
+*GUI Texts
+*----------------------------------------------------------
+* 0100 --> TABSTRIP STATUS
+
+----------------------------------------------------------------------------------
+Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750

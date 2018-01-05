@@ -1,0 +1,157 @@
+*&---------------------------------------------------------------------*
+*&  Include           ZEDR22_27_O01
+*&---------------------------------------------------------------------*
+*&---------------------------------------------------------------------*
+*&      Module  STATUS_0100  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE status_0100 OUTPUT.
+  SET PF-STATUS '0100'.
+  SET TITLEBAR '0100'.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  ACTIVE_TAB  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE active_tab OUTPUT.
+  go_tabstrip-activetab = gv_pressedtab.
+
+  CASE gv_pressedtab.
+    WHEN '1STTAB'.
+      gv_subscreen = '0101'.
+    WHEN '2NDTAB'.
+      gv_subscreen = '0102'.
+  ENDCASE.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  SET_FIELD1  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE set_field1 OUTPUT.
+  CLEAR : gs_fcat1, gt_fcat1.
+
+  PERFORM set_fcat1 USING :
+
+        'X' 'CARRID'   'Airline Code'               'SCARR',
+        ' ' 'CARRNAME' 'Airline name'               'SCARR',
+        ' ' 'CURRCODE' 'Local currency of airline'  'SCARR',
+        ' ' 'URL'      'Airline URL'                'SCARR'.
+
+  gs_layout-zebra      = 'X'.
+  gs_layout-sel_mode   = 'D'.
+  gs_layout-cwidth_opt = 'X'.
+  gs_variant-report    = sy-repid. "SY-CPROG
+  gs_variant-handle    = 'SCARR'.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  DIPLAY_SCREEN1  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE diplay_screen1 OUTPUT.
+
+  IF go_container1 IS NOT BOUND.
+    CREATE OBJECT go_container1
+      EXPORTING
+        container_name = 'GO_CONTAINER1'.
+
+    CREATE OBJECT go_grid1
+      EXPORTING
+        i_parent = go_container1.
+
+    CALL METHOD go_grid1->set_table_for_first_display
+      EXPORTING
+        is_variant      = gs_variant
+        i_save          = 'X'
+        i_default       = 'X'
+        is_layout       = gs_layout
+       it_toolbar_excluding          = gt_toolbar
+      CHANGING
+        it_outtab       = gt_data1[]
+        it_fieldcatalog = gt_fcat1.
+
+  ELSE.
+    PERFORM refresh_grid1.
+  ENDIF.
+
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  SET_FIELD2  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE set_field2 OUTPUT.
+  CLEAR : gs_fcat2, gt_fcat2.
+
+  PERFORM set_fcat2 USING :
+
+        'X' 'CARRID'     'Airline Code'                        'SFLIGHT',
+        'X' 'CONNID'     'Flight Connection Number'            'SFLIGHT',
+        'X' 'FLDATE'     'Flight date'                         'SFLIGHT',
+        ' ' 'PRICE'      'Airfare'                             'SFLIGHT',
+        ' ' 'CURRENCY'   'Local currency of airline'           'SFLIGHT',
+        ' ' 'PLANETYPE'  'Aircraft Type'                       'SFLIGHT',
+        ' ' 'SEATSMAX'   'Maximum capacity in economy class'   'SFLIGHT',
+        ' ' 'SEATSOCC'   'Occupied seats in economy class'     'SFLIGHT',
+        ' ' 'PAYMENTSUM' 'Total of current bookings'           'SFLIGHT',
+        ' ' 'SEATSMAX_B' 'Maximum capacity in business class'  'SFLIGHT',
+        ' ' 'SEATSOCC_B' 'Occupied seats in business class'    'SFLIGHT',
+        ' ' 'SEATSMAX_F' 'Maximum capacity in first class'     'SFLIGHT',
+        ' ' 'SEATSOCC_F' 'Occupied seats in first class'       'SFLIGHT'.
+
+  gs_layout-zebra      = 'X'.
+  gs_layout-sel_mode   = 'D'.
+  gs_layout-cwidth_opt = 'X'.
+  gs_variant-report    = sy-repid. "SY-CPROG
+  gs_variant-handle    = 'SFLIGHT'.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  DIPLAY_SCREEN2  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE diplay_screen2 OUTPUT.
+  IF go_container2 IS NOT BOUND.
+    CREATE OBJECT go_container2
+      EXPORTING
+        container_name = 'GO_CONTAINER2'.
+
+    CREATE OBJECT go_grid2
+      EXPORTING
+        i_parent = go_container2.
+
+    CALL METHOD go_grid2->set_table_for_first_display
+      EXPORTING
+        is_variant      = gs_variant
+        i_save          = 'X'
+        i_default       = 'X'
+        is_layout       = gs_layout
+       it_toolbar_excluding          = gt_toolbar
+      CHANGING
+        it_outtab       = gt_data2[]
+        it_fieldcatalog = gt_fcat2.
+
+  ELSE.
+    PERFORM refresh_grid2.
+  ENDIF.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  SET_LAYOUT  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE set_layout OUTPUT.
+  gs_layout-zebra      = 'X'.
+  gs_layout-sel_mode   = 'D'.
+  gs_layout-cwidth_opt = 'X'.
+  gs_variant-report    = sy-repid.
+  gs_variant-handle    = gv_pressedtab.
+  PERFORM exclude_toolbar.
+
+ENDMODULE.
+
+----------------------------------------------------------------------------------
+Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750
