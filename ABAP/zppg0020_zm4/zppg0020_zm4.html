@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPPG0020_ZM4</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPPG0020_ZM4</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  BOM Mess maintence Program (b03)</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report  ZPPG0020_03</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+include <a href ="zppg0020_zm4_top.html">ZPPG0020_ZM4_TOP</a>.
+<font color ="#0000FF">*INCLUDE ZPPG0020_TEST_ZM4_TOP.</font>
+<font color ="#0000FF">*INCLUDE zppg0020_03_top                         .    " global Data</font>
+
+include <a href ="zppg0020_zm4_common.html">ZPPG0020_ZM4_COMMON</a>.
+<font color ="#0000FF">*INCLUDE ZPPG0020_TEST_ZM4_COMMON.</font>
+<font color ="#0000FF">*INCLUDE zpp_common.</font>
+include <a href ="zppg0020_zm4_scr.html">ZPPG0020_ZM4_SCR</a>.
+<font color ="#0000FF">*INCLUDE ZPPG0020_TEST_ZM4_SCR.</font>
+<font color ="#0000FF">*INCLUDE zppg0020_03_scr.</font>
+include <a href ="zppg0020_zm4_f01.html">ZPPG0020_ZM4_F01</a>.
+<font color ="#0000FF">*INCLUDE ZPPG0020_TEST_ZM4_F01.</font>
+<font color ="#0000FF">*INCLUDE zppg0020_03_f01.</font>
+
+AT SELECTION-SCREEN.
+  IF sscrfields-ucomm = 'PUSH'.
+    PERFORM excel_download.
+  ENDIF.
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR pa_fpath.
+  PERFORM get_file_path CHANGING pa_fpath.
+
+START-OF-SELECTION.
+
+  PERFORM input_check_1.
+  PERFORM excel_upload_init.
+  PERFORM excel_data_check.
+  PERFORM excel_data_init.
+
+END-OF-SELECTION.
+
+<font color ="#0000FF">*Text elements</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* 001 선택조건</font>
+<font color ="#0000FF">* 002 BDC Mode</font>
+<font color ="#0000FF">* 003 양식 다운로드</font>
+<font color ="#0000FF">* 004 @J2@ 엑셀양식 다운로드</font>
+
+
+<font color ="#0000FF">*Selection texts</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* PA_FPATH         파일경로</font>
+<font color ="#0000FF">* PA_MODE         BDC Mode</font>
+<font color ="#0000FF">* P_UPDATE         Update Mode</font>
+
+
+<font color ="#0000FF">*Messages</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">* Message class: ZPPM1</font>
+<font color ="#0000FF">*000   &</font>
+
+<font color ="#0000FF">*Text elements</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* T04 등록양식 다운로드</font>
+
+
+<font color ="#0000FF">*Selection texts</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* PA_FPATH         File Path</font>
+<font color ="#0000FF">* PA_MODE D       .</font>
+<font color ="#0000FF">* P_UPDATE D       .</font>
+
+
+<font color ="#0000FF">*Messages</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">* Message class: ZPPM1</font>
+<font color ="#0000FF">*000</font>
+<font color ="#0000FF">*001</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750
+</font>
+</body>
+</html>

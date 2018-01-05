@@ -1,0 +1,998 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPPG0020_ZM4_F01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPPG0020_ZM4_F01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZPPG0020_03_F01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&  Include           ZPPG0020_03_F01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_field_category .
+  REFRESH: gt_field, gt_fieldcat.
+
+  CALL FUNCTION 'REUSE_ALV_FIELDCATALOG_MERGE'
+    EXPORTING
+      i_program_name     = g_program
+      i_internal_tabname = 'GT_DISPLAY'
+      i_inclname         = g_program
+    CHANGING
+      ct_fieldcat        = gt_field[].
+
+  1_pos = 1_pos + 1.          "&lt;--DISPLAY시 해당필드위치지정
+  CLEAR gs_fieldcat_ln.         "&lt;--기존FIELDCAT_LN의 HEADER에 입력되어
+  gs_fieldcat_ln-col_pos      = 1_pos.       "있을 수 있는 데이터를 삭제
+  gs_fieldcat_ln-fieldname    = 'ICON'."반드시 대문자 입력
+  gs_fieldcat_ln-key = ' '.
+  gs_fieldcat_ln-fix_column   ='X'. "열 고정
+  gs_fieldcat_ln-reptext_ddic = '아이콘'.
+  APPEND gs_fieldcat_ln TO gt_fieldcat.
+
+  1_pos = 1_pos + 1.          "&lt;--DISPLAY시 해당필드위치지정
+  CLEAR gs_fieldcat_ln.         "&lt;--기존FIELDCAT_LN의 HEADER에 입력되어
+  gs_fieldcat_ln-col_pos      = 1_pos.       "있을 수 있는 데이터를 삭제
+  gs_fieldcat_ln-fieldname    = 'WERKS'."반드시 대문자 입력
+  gs_fieldcat_ln-key = ' '.
+  gs_fieldcat_ln-fix_column   ='X'. "열 고정
+  gs_fieldcat_ln-reptext_ddic = '플랜트'.
+  APPEND gs_fieldcat_ln TO gt_fieldcat.
+
+  1_pos = 1_pos + 1.          "&lt;--DISPLAY시 해당필드위치지정
+  CLEAR gs_fieldcat_ln.         "&lt;--기존FIELDCAT_LN의 HEADER에 입력되어
+  gs_fieldcat_ln-col_pos      = 1_pos.       "있을 수 있는 데이터를 삭제
+  gs_fieldcat_ln-fieldname    = 'MATNR'."반드시 대문자 입력
+  gs_fieldcat_ln-key = ' '.
+  gs_fieldcat_ln-no_zero = 'X'.
+  gs_fieldcat_ln-fix_column   ='X'. "열 고정
+  gs_fieldcat_ln-reptext_ddic = '자재'.
+  APPEND gs_fieldcat_ln TO gt_fieldcat.
+
+  1_pos = 1_pos + 1.
+  CLEAR gs_fieldcat_ln.
+  gs_fieldcat_ln-col_pos      = 1_pos.
+  gs_fieldcat_ln-fieldname    = 'TEMP1'.
+  gs_fieldcat_ln-key = ' '.
+  gs_fieldcat_ln-fix_column   ='X'.
+  gs_fieldcat_ln-reptext_ddic = '자재명'.
+  APPEND gs_fieldcat_ln TO gt_fieldcat.
+
+  1_pos = 1_pos + 1.
+  CLEAR gs_fieldcat_ln.
+  gs_fieldcat_ln-col_pos      = 1_pos.
+  gs_fieldcat_ln-fieldname    = 'STLAL'.
+  gs_fieldcat_ln-key = ' '.
+  gs_fieldcat_ln-fix_column   ='X'.
+  gs_fieldcat_ln-reptext_ddic = '대처번호'.
+  APPEND gs_fieldcat_ln TO gt_fieldcat.
+
+  1_pos = 1_pos + 1.
+  CLEAR gs_fieldcat_ln.
+  gs_fieldcat_ln-col_pos      = 1_pos.
+  gs_fieldcat_ln-fieldname    = 'TEXT'.
+  gs_fieldcat_ln-key = ' '.
+  gs_fieldcat_ln-fix_column   ='X'.
+  gs_fieldcat_ln-reptext_ddic = '에러 사유'.
+  APPEND gs_fieldcat_ln TO gt_fieldcat.
+
+ENDFORM. " SET_FIELD_CATEGORY
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  CHANGE_DISPLAY_ATTRIBUTE</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM change_display_attribute .
+  DATA: lv_tabix TYPE i.
+
+<font color ="#0000FF">*****  CLEAR : gs_result.</font>
+<font color ="#0000FF">*****  LOOP AT gt_result INTO gs_result.</font>
+<font color ="#0000FF">*****    lv_tabix = sy-tabix.</font>
+<font color ="#0000FF">*****    CLEAR: gt_coltab[].</font>
+<font color ="#0000FF">*****    PERFORM initial_color  CHANGING gt_coltab.</font>
+<font color ="#0000FF">*****</font>
+<font color ="#0000FF">*****    CLEAR: gs_result-colinfo[].</font>
+<font color ="#0000FF">*****    INSERT lines of gt_coltab  INTO TABLE gs_result-colinfo.</font>
+<font color ="#0000FF">*****</font>
+<font color ="#0000FF">*****    MODIFY gt_result FROM gs_result INDEX lv_tabix.</font>
+<font color ="#0000FF">*****  ENDLOOP.</font>
+
+ENDFORM. " CHANGE_DISPLAY_ATTRIBUTE
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  INITIAL_COLOR</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM initial_color CHANGING pt_coltab TYPE lvc_t_scol.
+  DATA: ls_fieldcat TYPE slis_fieldcat_alv, "lvc_s_fcat,
+        ls_color    TYPE lvc_s_scol.
+
+<font color ="#0000FF">*****  LOOP AT slis_fieldcat INTO ls_fieldcat.</font>
+<font color ="#0000FF">*****    CLEAR ls_color.</font>
+<font color ="#0000FF">*****    ls_color-fname = ls_fieldcat-fieldname.</font>
+<font color ="#0000FF">*****</font>
+<font color ="#0000FF">*****    CASE ls_color-fname.</font>
+<font color ="#0000FF">*****      WHEN 'TEXT'.</font>
+<font color ="#0000FF">*****        ls_color-color-col = 3.</font>
+<font color ="#0000FF">*****        ls_color-color-int = 0.</font>
+<font color ="#0000FF">*****        INSERT ls_color INTO TABLE pt_coltab.</font>
+<font color ="#0000FF">*****      WHEN 'MATNR'.</font>
+<font color ="#0000FF">*****        ls_color-color-col = 4.</font>
+<font color ="#0000FF">*****        ls_color-color-int = 1.</font>
+<font color ="#0000FF">*****        INSERT ls_color INTO TABLE pt_coltab.</font>
+<font color ="#0000FF">*****      WHEN OTHERS.</font>
+<font color ="#0000FF">*****    ENDCASE.</font>
+<font color ="#0000FF">*****  ENDLOOP.</font>
+
+ENDFORM. " INITIAL_COLOR
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  SET_EVENTS</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_events USING p_events TYPE slis_t_event.
+  DATA ls_event TYPE slis_alv_event.
+<font color ="#0000FF">*****</font>
+<font color ="#0000FF">*****  CALL FUNCTION 'REUSE_ALV_EVENTS_GET'</font>
+<font color ="#0000FF">*****    EXPORTING</font>
+<font color ="#0000FF">*****      i_list_type = 0</font>
+<font color ="#0000FF">*****    IMPORTING</font>
+<font color ="#0000FF">*****      et_events   = p_events.</font>
+<font color ="#0000FF">*****</font>
+<font color ="#0000FF">*****  READ TABLE p_events WITH KEY name =  slis_ev_top_of_page</font>
+<font color ="#0000FF">*****                      INTO ls_event.</font>
+<font color ="#0000FF">*****  IF sy-subrc = 0.</font>
+<font color ="#0000FF">*****    MOVE   'TOP_OF_PAGE' TO ls_event-form.</font>
+<font color ="#0000FF">*****    APPEND ls_event TO p_events.</font>
+<font color ="#0000FF">*****  ENDIF.</font>
+
+ENDFORM. " SET_EVENTSs
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  PF_STATUS</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM pf_status_set USING rt_extab TYPE slis_t_extab.
+
+  SET PF-STATUS 'STANDARD'  EXCLUDING rt_extab.
+
+ENDFORM. " PF_STATUS_SET
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  BDC_DYNPRO_PROCESSING</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM bdc_dynpro_processing USING p_begin p_name p_no.
+  IF p_begin = 'X'.
+    CLEAR g_fbdcdata.
+    MOVE  p_name  TO g_fbdcdata-program.
+    MOVE  p_no    TO g_fbdcdata-dynpro.
+    MOVE  'X'     TO g_fbdcdata-dynbegin.
+    APPEND g_fbdcdata.
+  ELSE.
+    CLEAR g_fbdcdata.
+    MOVE  p_name  TO g_fbdcdata-fnam.
+    MOVE  p_no    TO g_fbdcdata-fval.
+    APPEND g_fbdcdata.
+  ENDIF.
+
+ENDFORM. " BDC_DYNPRO_PROCESSING
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  GET_FILE_PATH</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM get_file_path CHANGING VALUE(p_file).
+
+  DATA: ld_def_path     TYPE string,
+        ld_rc           TYPE i VALUE 1,
+        ld_mask         TYPE string VALUE 'Excel-Sheet (*.xls)|*.xls|',
+        ld_window_title TYPE string,
+        lt_files        TYPE filetable,
+        l_fname         TYPE string.
+
+<font color ="#0000FF">* returns default path for up- and download</font>
+  CALL METHOD cl_gui_frontend_services=&gt;directory_get_current
+    CHANGING
+      current_directory = ld_def_path.
+
+<font color ="#0000FF">* calls selection-popup -&gt; returns upload-path + filename</font>
+  CALL METHOD cl_gui_frontend_services=&gt;file_open_dialog
+    EXPORTING
+<font color ="#0000FF">*     WINDOW_TITLE      = LD_WINDOW_TITLE</font>
+<font color ="#0000FF">*     DEFAULT_FILENAME  = L_FNAME</font>
+      file_filter       = ld_mask
+      initial_directory = ld_def_path
+    CHANGING
+      file_table        = lt_files
+      rc                = ld_rc.
+
+  READ TABLE lt_files INTO p_file INDEX 1.
+
+ENDFORM. " GET_FILE_PATH
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  EXCEL_UPLOAD_INIT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM excel_upload_init .
+
+  TYPES truxs_t_text_data(4096) TYPE c OCCURS 0.
+  DATA: i_truxs TYPE truxs_t_text_data.
+  DATA: l_filename LIKE rlgrap-filename.
+
+  l_filename = pa_fpath.
+  CALL FUNCTION 'TEXT_CONVERT_XLS_TO_SAP'
+    EXPORTING
+      i_line_header        = 'X'   "Title이 있을경우 Header line을삭제
+      i_tab_raw_data       = i_truxs
+      i_filename           = l_filename
+    TABLES
+      i_tab_converted_data = gt_excel
+    EXCEPTIONS
+      conversion_failed    = 1
+      OTHERS               = 2.
+
+  IF sy-subrc = 1.
+    MESSAGE s000 WITH 'File open error !' DISPLAY LIKE 'E'.
+    g_err = 'X'.
+    EXIT.
+  ELSEIF sy-subrc = 2.
+    MESSAGE s000 WITH 'File read error !' DISPLAY LIKE 'E'.
+    g_err = 'X'.
+    EXIT.
+  ENDIF.
+
+ENDFORM. " EXCEL_UPLOAD_INIT
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  EXCEL_DATA_CHECK</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM excel_data_check .
+
+  CHECK g_err NE 'X'.
+  IF gt_excel[] IS INITIAL.
+    MESSAGE i000 WITH 'Excel Data empty'.
+    g_err = 'X'.
+  ENDIF.
+
+ENDFORM. " EXCEL_DATA_CHECK
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  EXCEL_DATA_INIT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM excel_data_init .
+
+  CHECK g_err NE 'X'.
+  PERFORM gather_checking_data.  "EXCEL에 필요한 값 변경
+  PERFORM data_prepare.
+  PERFORM data_process.          "MASTER DATA 올라가는것을 넣는다
+
+  PERFORM display_data.
+
+ENDFORM. " EXCEL_DATA_INIT
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  GATHER_CHECKING_DATA</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM gather_checking_data .
+
+  LOOP AT gt_excel INTO gs_excel.
+
+    CALL FUNCTION 'CONVERSION_EXIT_MATN1_INPUT'
+      EXPORTING
+        input  = gs_excel-matnr
+      IMPORTING
+        output = gs_excel-matnr.
+
+    CALL FUNCTION 'CONVERSION_EXIT_ALPHA_INPUT'
+      EXPORTING
+        input  = gs_excel-posnr
+      IMPORTING
+        output = gs_excel-posnr.
+
+    MODIFY gt_excel FROM gs_excel TRANSPORTING matnr posnr.
+
+  ENDLOOP.
+
+  SORT gt_excel.
+  DELETE ADJACENT DUPLICATES FROM gt_excel.
+
+ENDFORM. " GATHER_CHECKING_DATA
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  DATA_PREPARE</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM data_prepare .
+
+  DATA : ls_result LIKE gs_result,
+         ls_chk    LIKE gs_result,
+         lt_result LIKE gs_result OCCURS 0.
+  DATA : lv_tabix  TYPE sy-tabix,
+         lv_row(5) TYPE n.
+
+  DATA lv_flag.
+
+  CLEAR : ls_result, lt_result[].
+  CLEAR : lv_tabix, lv_row.
+
+  g_pcnt = g_scnt = g_ecnt = g_tcnt = g_cnt = 0.
+
+  CLEAR : gs_excel, gs_result, ls_result.
+
+  g_cnt = g_scnt.
+
+ENDFORM. " DATA_PREPARE
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  DISPLAY_DATA</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM display_data .
+
+<font color ="#0000FF">*& Set Layout</font>
+  CLEAR gs_layout.
+  gs_layout-zebra             = ''.
+  gs_layout-box_fieldname     = 'MARK'.
+  gs_layout-colwidth_optimize = 'X'.
+  gs_layout-coltab_fieldname  = 'COLINFO'.
+  gs_layout-no_totalline        = 'X'.
+<font color ="#0000FF">*  slis_layout-totals_before_items = 'X'.</font>
+<font color ="#0000FF">*****</font>
+<font color ="#0000FF">* FORM문 발췌함수</font>
+  CALL FUNCTION 'REUSE_ALV_EVENTS_GET'
+    EXPORTING
+      i_list_type = 0
+    IMPORTING
+      et_events   = gt_events.
+
+<font color ="#0000FF">* FORM문   생성</font>
+  PERFORM  form_setting USING:
+              slis_ev_top_of_page    c_top_of_page,
+              slis_ev_user_command   c_user_command.
+<font color ="#0000FF">* PROGRAM  ID</font>
+  g_program = sy-repid.
+
+  PERFORM header_setting USING:
+          'H'   ' '               ' ',
+          'S'   'TOTAL : '        g_tcnt,
+          'S'   'SUCCESS : '      g_scnt,
+          'S'   'ERROR   : '      g_ecnt.
+
+<font color ="#0000FF">*& Set Field Category</font>
+  PERFORM set_field_category.
+
+  CALL FUNCTION 'REUSE_ALV_GRID_DISPLAY'
+    EXPORTING
+      i_callback_program      = g_program
+      is_layout               = gs_layout
+      i_callback_user_command = 'USER_COMMAND'
+<font color ="#0000FF">*     I_CALLBACK_PF_STATUS_SET = C_STATUS_SET</font>
+      i_save                  = 'A'
+      is_variant              = gs_variant
+      it_events               = gt_events[]
+      it_fieldcat             = gt_fieldcat[]
+      it_sort                 = gt_sort[]
+    IMPORTING
+      e_exit_caused_by_caller = g_exit_caused_by_caller
+      es_exit_caused_by_user  = gs_exit_caused_by_user
+    TABLES
+      t_outtab                = gt_result[].
+
+ENDFORM. " DISPLAY_DATA
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  DATA_PROCESS</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM data_process .
+  CLEAR : g_matnr, g_stlal, g_exist, g_werks, gt_result, gt_result[].
+  SORT gt_excel BY matnr stlal posnr.
+  LOOP AT gt_excel INTO gs_excel.
+    CLEAR g_exist.
+    IF gs_excel-matnr &lt;&gt; g_matnr." or g_check = 'X'.
+    ENDIF.
+
+    CALL FUNCTION 'CONVERSION_EXIT_ALPHA_INPUT'
+      EXPORTING
+        input  = gs_excel-stlal
+      IMPORTING
+        output = gs_excel-stlal.
+
+    IF gs_excel-matnr &lt;&gt; g_matnr OR gs_excel-stlal &lt;&gt; g_stlal.
+<font color ="#0000FF">*     모자재 올리는곳</font>
+      IF sy-tabix &lt;&gt; 1.
+        PERFORM bdc_dynpro_processing USING:
+        'X' 'SAPLCSDI'             '0140',
+        ' ' 'BDC_OKCODE'           '=FCBU'.
+
+        CALL TRANSACTION 'CS01' USING    g_fbdcdata
+                                MODE     pa_mode
+                                UPDATE   p_update
+                                MESSAGES INTO gt_msg.
+        PERFORM transaction_result.
+        CLEAR : g_fbdcdata, g_fbdcdata[], gt_msg, gt_msg[].
+      ENDIF.
+      PERFORM cs01_transaction.
+    ELSE.
+<font color ="#0000FF">*     자자재 올리는곳</font>
+      PERFORM cs02_transaction.
+    ENDIF.
+
+    g_matnr = gs_excel-matnr.
+    g_stlal = gs_excel-stlal.
+<font color ="#0000FF">*    g_STLAL = gs_excel-stlal.</font>
+    g_werks = gs_excel-werks.
+    g_maktx = gs_excel-temp1.
+    AT LAST.
+      PERFORM bdc_dynpro_processing USING:
+      'X' 'SAPLCSDI'             '0140',
+      ' ' 'BDC_OKCODE'           '=FCBU'.
+
+      CALL TRANSACTION 'CS01' USING    g_fbdcdata
+                              MODE     pa_mode
+                              UPDATE   p_update
+                              MESSAGES INTO gt_msg.
+      PERFORM transaction_result.
+      CLEAR : g_fbdcdata, g_fbdcdata[], gt_msg, gt_msg[].
+
+    ENDAT.
+
+  ENDLOOP.
+
+ENDFORM. " DATA_PROCESS
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  CHECK_STLAL</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM check_stlal .
+  DATA : l_stlal TYPE rc29n-stlal.
+  CLEAR: l_stlal .
+
+  CALL FUNCTION 'CONVERSION_EXIT_ALPHA_INPUT'
+    EXPORTING
+      input  = gs_excel-stlal
+    IMPORTING
+      output = gs_excel-stlal.
+
+  SELECT SINGLE stlal INTO l_stlal
+     FROM mast
+    WHERE matnr = gs_excel-matnr
+      AND werks = gs_excel-werks
+      AND stlan = gs_excel-stlan
+      AND stlal = gs_excel-stlal.
+
+  IF sy-subrc = 0.
+    g_exist = 'X'.
+  ENDIF.
+  g_check = 'Y'.
+
+ENDFORM. " CHECK_STLAL
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  CS01_TRANSACTION</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM cs01_transaction.
+
+  PERFORM bdc_dynpro_processing USING:
+  'X' 'SAPLCSDI'             '0100',
+  ' ' 'BDC_OKCODE'           '=ENT1',
+  ' ' 'RC29N-MATNR'          gs_excel-matnr,
+  ' ' 'RC29N-WERKS'          gs_excel-werks,
+  ' ' 'RC29N-STLAN'          gs_excel-stlan,
+  ' ' 'RC29N-STLAL'          gs_excel-stlal,
+  ' ' 'RC29N-DATUV'          gs_excel-bodat,  "SY-DATUM   ,
+
+  'X' 'SAPLCSDI'             '0110',
+  ' ' 'BDC_OKCODE'           '/00',
+<font color ="#0000FF">*    ' ' 'RC29K-BMENG'          GS_EXCEL-BMENG,</font>
+<font color ="#0000FF">*    ' ' 'RC29K-STLST'          '1'         ,</font>
+
+  'X' 'SAPLCSDI'             '0111',
+  ' ' 'BDC_OKCODE'           '/00'.
+
+  PERFORM bdc_dynpro_processing USING:
+  'X' 'SAPLCSDI'             '0140',
+  ' ' 'BDC_OKCODE'           '=/CS  ',
+  ' ' 'RC29P-IDNRK(01)'      gs_excel-idnrk,
+  ' ' 'RC29P-MENGE(01)'      gs_excel-menge,
+  ' ' 'RC29P-POSTP(01)'      gs_excel-postp,
+
+  'X' 'SAPLCSDI'             '0130',
+  ' ' 'BDC_OKCODE'           '/00' ,
+  ' ' 'RC29P-IDNRK'          gs_excel-idnrk,
+<font color ="#0000FF">*  ' ' 'RC29P-ALPGR'          GS_EXCEL-ALPGR,</font>
+  ' ' 'RC29P-MENGE'          gs_excel-menge,
+  ' ' 'RC29P-MEINS'          gs_excel-meins,
+<font color ="#0000FF">*  ' ' 'RC29P-RFPNT'          GS_EXCEL-RFPNT,</font>
+  ' ' 'RC29P-AUSCH'          gs_excel-ausch.
+<font color ="#0000FF">*  ' ' 'RC29P-ITSOB'          gs_excel-itsob.</font>
+
+  PERFORM bdc_dynpro_processing USING:
+  'X' 'SAPLCSDI'             '0131',
+  ' ' 'BDC_OKCODE'           '/00',
+  ' ' 'RC29P-POTX1'          gs_excel-potx1,
+  ' ' 'RC29P-POTX2'          gs_excel-potx2,
+
+  ' ' 'RC29P-SANKA'          gs_excel-sanka,
+  ' ' 'RC29P-BEIKZ'          gs_excel-beikz.
+
+  IF gs_excel-itsob = '52' OR gs_excel-postp = 'N'.
+    PERFORM bdc_dynpro_processing USING:
+    'X' 'SAPLCSDI'             '0133',
+    ' ' 'BDC_OKCODE'           '/00'.
+  ENDIF.
+
+ENDFORM. " CS01_TRANSACTION
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  CS01_TRANSACTION_02</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM cs02_transaction.
+
+  PERFORM bdc_dynpro_processing USING:
+  'X' 'SAPLCSDI'             '0140',
+  ' ' 'BDC_CURSOR'           'RC29P-POSNR(01)',
+  ' ' 'BDC_OKCODE'           '=FCNP'.
+
+  PERFORM bdc_dynpro_processing USING:
+  'X' 'SAPLCSDI'             '0140',
+  ' ' 'BDC_OKCODE'           '=/CS',
+  ' ' 'RC29P-IDNRK(02)'      gs_excel-idnrk,
+  ' ' 'RC29P-MENGE(02)'      gs_excel-menge,
+  ' ' 'RC29P-POSTP(02)'      gs_excel-postp,
+
+  'X' 'SAPLCSDI'             '0130',
+  ' ' 'BDC_OKCODE'           '/00' ,
+  ' ' 'RC29P-IDNRK'          gs_excel-idnrk,
+<font color ="#0000FF">*  ' ' 'RC29P-ALPGR'          GS_EXCEL-ALPGR,</font>
+  ' ' 'RC29P-MENGE'          gs_excel-menge,
+  ' ' 'RC29P-MEINS'          gs_excel-meins,
+<font color ="#0000FF">*  ' ' 'RC29P-RFPNT'          GS_EXCEL-RFPNT,</font>
+  ' ' 'RC29P-AUSCH'          gs_excel-ausch.
+<font color ="#0000FF">*  ' ' 'RC29P-ITSOB'          gs_excel-itsob.</font>
+
+  PERFORM bdc_dynpro_processing USING:
+  'X' 'SAPLCSDI'             '0131',
+  ' ' 'BDC_OKCODE'           '/00',
+  ' ' 'RC29P-POTX1'          gs_excel-potx1,
+  ' ' 'RC29P-POTX2'          gs_excel-potx2,
+
+  ' ' 'RC29P-SANKA'          gs_excel-sanka,
+  ' ' 'RC29P-BEIKZ'          gs_excel-beikz.
+
+  IF gs_excel-itsob = '52' OR gs_excel-postp = 'N'.
+    PERFORM bdc_dynpro_processing USING:
+    'X' 'SAPLCSDI'             '0133',
+    ' ' 'BDC_OKCODE'           '/00'.
+  ENDIF.
+
+ENDFORM. " CS01_TRANSACTION_02
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  TRANSACTION_RESULT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM transaction_result .
+
+<font color ="#0000FF">* 처리 결과 확인</font>
+  g_count = lines( gt_msg ).
+  READ TABLE gt_msg INDEX g_count.
+
+  PERFORM message_text_build USING gt_msg-msgid gt_msg-msgnr
+                                   gt_msg-msgv1 gt_msg-msgv2
+                                   gt_msg-msgv3 gt_msg-msgv4
+                          CHANGING gv_message.
+
+  PERFORM get_message USING gt_emsg-file.
+
+<font color ="#0000FF">*  IF GT_MSG-MSGID = 'M7' AND GT_MSG-MSGNR = '060'.</font>
+  IF gt_msg-msgid = '29' AND gt_msg-msgnr = '030'.
+    gs_result-icon = c_green.
+    gs_result-text = ' '.
+    ADD 1 TO g_scnt.
+  ELSE.
+    gs_result-icon = c_red.
+    gs_result-text = gt_emsg-file.
+    ADD 1 TO g_ecnt.
+
+  ENDIF.
+  g_tcnt = g_tcnt + 1.
+
+
+<font color ="#0000FF">*  MOVE-CORRESPONDING gs_excel TO gs_result.</font>
+  gs_result-matnr = g_matnr.
+  gs_result-stlal = g_stlal.
+  gs_result-temp1 = g_maktx.
+  gs_result-werks = g_werks.
+  APPEND : gs_result TO gt_result.
+
+ENDFORM. " CS01_TRANSACTION_03
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  MESSAGE_TEXT_BUILD</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM message_text_build USING p_msgid
+                                  p_msgnr
+                                  p_msgv1
+                                  p_msgv2
+                                  p_msgv3
+                                  p_msgv4
+                         CHANGING p_text.
+
+  CALL FUNCTION 'MESSAGE_TEXT_BUILD'
+    EXPORTING
+      msgid               = p_msgid
+      msgnr               = p_msgnr
+      msgv1               = p_msgv1
+      msgv2               = p_msgv2
+      msgv3               = p_msgv3
+      msgv4               = p_msgv4
+    IMPORTING
+      message_text_output = p_text.
+
+ENDFORM. " MESSAGE_TEXT_BUILD
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  GET_MESSAGE</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM get_message USING p_message.
+
+  CALL FUNCTION 'BAL_DSP_TXT_MSG_READ'
+    EXPORTING
+      i_langu        = '3'
+      i_msgid        = sy-msgid
+      i_msgno        = sy-msgno
+      i_msgv1        = sy-msgv1
+      i_msgv2        = sy-msgv2
+      i_msgv3        = sy-msgv3
+      i_msgv4        = sy-msgv4
+    IMPORTING
+      e_message_text = p_message.
+
+
+ENDFORM. " GET_MESSAGE
+
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*      Form  TOP_OF_PAGE</font>
+<font color ="#0000FF">*---------------------------------------------------------------------*</font>
+FORM top_of_page.
+
+  CALL FUNCTION 'REUSE_ALV_COMMENTARY_WRITE'
+    EXPORTING
+<font color ="#0000FF">*     i_logo             = 'LGCNSLOGO'</font>
+      it_list_commentary = gt_list_top_of_page.
+
+ENDFORM. "top_of_page
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  EXCEL_LAYOUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM excel_layout .
+
+  INCLUDE ole2incl.
+
+  DATA: application TYPE ole2_object,
+        workbook    TYPE ole2_object,
+        sheet       TYPE ole2_object,
+        cells       TYPE ole2_object,
+        columns     TYPE ole2_object.
+  CONSTANTS: row_max TYPE i VALUE 10.                       "256.
+  DATA index TYPE i.
+
+  CREATE OBJECT application 'excel.application'.
+  SET PROPERTY OF application 'visible' = 1.
+  CALL METHOD OF application 'Workbooks' = workbook.
+  CALL METHOD OF workbook 'Add'.
+
+<font color ="#0000FF">* Create first Excel Sheet</font>
+  CALL METHOD OF application 'Worksheets' = sheet
+    EXPORTING
+    #1 = 1.
+  CALL METHOD OF sheet 'Activate'.
+  SET PROPERTY OF sheet 'Name' = 'Sheet1'.
+
+  index = 1.
+  CALL METHOD OF sheet 'cells' = cells
+    EXPORTING
+    #1 = index.
+  SET PROPERTY OF cells 'Value' = '자재코드'.
+
+  CALL METHOD OF sheet 'columns' = columns
+    EXPORTING
+    #1 = index.
+  CALL METHOD OF columns 'AutoFit'.
+
+  index = 2. .
+  CALL METHOD OF sheet 'cells' = cells
+    EXPORTING
+    #1 = index.
+  SET PROPERTY OF cells 'Value' = '품명'.
+
+  CALL METHOD OF sheet 'columns' = columns
+    EXPORTING
+    #1 = index.
+  CALL METHOD OF columns 'AutoFit'.
+
+  index = 3.
+  CALL METHOD OF sheet 'cells' = cells
+    EXPORTING
+    #1 = index.
+  SET PROPERTY OF cells 'Value' = '플랜트'.
+
+  CALL METHOD OF sheet 'columns' = columns
+    EXPORTING
+    #1 = index.
+  CALL METHOD OF columns 'AutoFit'.
+
+  index = 4. .
+  CALL METHOD OF sheet 'cells' = cells
+    EXPORTING
+    #1 = index.
+  SET PROPERTY OF cells 'Value' = '원단위용도'.
+
+  CALL METHOD OF sheet 'columns' = columns
+    EXPORTING
+    #1 = index.
+  CALL METHOD OF columns 'AutoFit'.
+
+  index = 5.
+  CALL METHOD OF sheet 'cells' = cells
+    EXPORTING
+    #1 = index.
+  SET PROPERTY OF cells 'Value' = '대체원단위번호'.
+
+  CALL METHOD OF sheet 'columns' = columns
+    EXPORTING
+    #1 = index.
+  CALL METHOD OF columns 'AutoFit'.
+
+  index = 6. .
+  CALL METHOD OF sheet 'cells' = cells
+    EXPORTING
+    #1 = index.
+  SET PROPERTY OF cells 'Value' = 'BOM 생성일자'.
+
+  CALL METHOD OF sheet 'columns' = columns
+    EXPORTING
+    #1 = index.
+  CALL METHOD OF columns 'AutoFit'.
+
+  index = 7.
+  CALL METHOD OF sheet 'cells' = cells
+    EXPORTING
+    #1 = index.
+  SET PROPERTY OF cells 'Value' = '기준수량'.
+
+  CALL METHOD OF sheet 'columns' = columns
+    EXPORTING
+    #1 = index.
+  CALL METHOD OF columns 'AutoFit'.
+
+  index = 8.
+  CALL METHOD OF sheet 'cells' = cells
+    EXPORTING
+    #1 = index.
+  SET PROPERTY OF cells 'Value' = '단위'.
+
+  CALL METHOD OF sheet 'columns' = columns
+    EXPORTING
+    #1 = index.
+  CALL METHOD OF columns 'AutoFit'.
+
+  index = 9. .
+  CALL METHOD OF sheet 'cells' = cells
+    EXPORTING
+    #1 = index.
+  SET PROPERTY OF cells 'Value' = '대체 텍스트'.
+
+  CALL METHOD OF sheet 'columns' = columns
+    EXPORTING
+    #1 = index.
+  CALL METHOD OF columns 'AutoFit'.
+
+  index = 10.
+  CALL METHOD OF sheet 'cells' = cells
+    EXPORTING
+    #1 = index.
+  SET PROPERTY OF cells 'Value' = '상태'.
+
+  CALL METHOD OF sheet 'columns' = columns
+    EXPORTING
+    #1 = index.
+  CALL METHOD OF columns 'AutoFit'.
+
+  index = 11. .
+  CALL METHOD OF sheet 'cells' = cells
+    EXPORTING
+    #1 = index.
+  SET PROPERTY OF cells 'Value' = '품목번호'.
+
+  CALL METHOD OF sheet 'columns' = columns
+    EXPORTING
+    #1 = index.
+  CALL METHOD OF columns 'AutoFit'.
+
+  index = 12.
+  CALL METHOD OF sheet 'cells' = cells
+    EXPORTING
+    #1 = index.
+  SET PROPERTY OF cells 'Value' = '품목범주'.
+
+  CALL METHOD OF sheet 'columns' = columns
+    EXPORTING
+    #1 = index.
+  CALL METHOD OF columns 'AutoFit'.
+
+  index = 13. .
+  CALL METHOD OF sheet 'cells' = cells
+    EXPORTING
+    #1 = index.
+  SET PROPERTY OF cells 'Value' = '자품목코드'.
+
+  CALL METHOD OF sheet 'columns' = columns
+    EXPORTING
+    #1 = index.
+  CALL METHOD OF columns 'AutoFit'.
+
+  index = 14. .
+  CALL METHOD OF sheet 'cells' = cells
+    EXPORTING
+    #1 = index.
+  SET PROPERTY OF cells 'Value' = '소요수량'.
+
+  index = 15.
+  CALL METHOD OF sheet 'cells' = cells
+    EXPORTING
+    #1 = index.
+  SET PROPERTY OF cells 'Value' = '단위'.
+
+  CALL METHOD OF sheet 'columns' = columns
+    EXPORTING
+    #1 = index.
+  CALL METHOD OF columns 'AutoFit'.
+
+  index = 16.
+  CALL METHOD OF sheet 'cells' = cells
+    EXPORTING
+    #1 = index.
+  SET PROPERTY OF cells 'Value' = '구성부품스크랩'.
+
+  CALL METHOD OF sheet 'columns' = columns
+    EXPORTING
+    #1 = index.
+  CALL METHOD OF columns 'AutoFit'.
+
+  index = 17.
+  CALL METHOD OF sheet 'cells' = cells
+    EXPORTING
+    #1 = index.
+  SET PROPERTY OF cells 'Value' = '특별조달'.
+
+  CALL METHOD OF sheet 'columns' = columns
+    EXPORTING
+    #1 = index.
+  CALL METHOD OF columns 'AutoFit'.
+
+  index = 18.
+  CALL METHOD OF sheet 'cells' = cells
+    EXPORTING
+    #1 = index.
+  SET PROPERTY OF cells 'Value' = '원가지시자'.
+
+  CALL METHOD OF sheet 'columns' = columns
+    EXPORTING
+    #1 = index.
+  CALL METHOD OF columns 'AutoFit'.
+
+  index = 19.
+  CALL METHOD OF sheet 'cells' = cells
+    EXPORTING
+    #1 = index.
+  SET PROPERTY OF cells 'Value' = '자재공급지시자'.
+
+  CALL METHOD OF sheet 'columns' = columns
+    EXPORTING
+    #1 = index.
+  CALL METHOD OF columns 'AutoFit'.
+
+  index = 20.
+  CALL METHOD OF sheet 'cells' = cells
+    EXPORTING
+    #1 = index.
+  SET PROPERTY OF cells 'Value' = '품목텍스트1'.
+
+  CALL METHOD OF sheet 'columns' = columns
+    EXPORTING
+    #1 = index.
+  CALL METHOD OF columns 'AutoFit'.
+
+  index = 21.
+  CALL METHOD OF sheet 'cells' = cells
+    EXPORTING
+    #1 = index.
+  SET PROPERTY OF cells 'Value' = '품목텍스트2'.
+
+  CALL METHOD OF sheet 'columns' = columns
+    EXPORTING
+    #1 = index.
+  CALL METHOD OF columns 'AutoFit'.
+
+
+ENDFORM. " EXCEL_LAYOUT
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  INPUT_CHECK_1</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM input_check_1 .
+
+  IF pa_fpath IS INITIAL.
+    MESSAGE s000 DISPLAY LIKE 'E' WITH '파일경로는 필수 입력 필드입니다.'.
+    LEAVE LIST-PROCESSING.
+  ENDIF.
+
+ENDFORM. " INPUT_CHECK_1
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  EXCEL_DOWNLOAD</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*  --&gt;  p1        text</font>
+<font color ="#0000FF">*  &lt;--  p2        text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*FORM excel_download .</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  DATA : wwwdata_item LIKE wwwdatatab,</font>
+<font color ="#0000FF">*         rc           TYPE i.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  gv_file = 'C:\BOM Maintence.xls'.</font>
+<font color ="#0000FF">*  PERFORM get_file USING 'S' gv_file.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*  IF sy-subrc &lt;&gt; 0 OR gv_file IS INITIAL.</font>
+<font color ="#0000FF">*    "MESSAGE S001 WITH 'Cancel Template Download File!'.</font>
+<font color ="#0000FF">*    MESSAGE s001 WITH TEXT-m01.</font>
+<font color ="#0000FF">*    EXIT.</font>
+<font color ="#0000FF">*  ENDIF.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*ENDFORM.</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  GET_FILE</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*      --&gt;P_2237   text</font>
+<font color ="#0000FF">*      --&gt;P_GV_FILE  text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+FORM get_file  USING    p_mode
+                        px_fname.
+
+  CALL FUNCTION 'WS_FILENAME_GET'
+    EXPORTING
+      def_filename     = px_fname
+      def_path         = 'C:\ '
+      mask             = ',*.*,*.*. '
+      mode             = p_mode
+    IMPORTING
+      filename         = px_fname
+    EXCEPTIONS
+      inv_winsys       = 1
+      no_batch         = 2
+      selection_cancel = 3
+      selection_error  = 4
+      OTHERS           = 5.
+
+
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&      Form  EXCEL_DOWNLOAD</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*       text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+<font color ="#0000FF">*  --&gt;  p1        text</font>
+<font color ="#0000FF">*  &lt;--  p2        text</font>
+<font color ="#0000FF">*----------------------------------------------------------------------*</font>
+FORM excel_download .
+
+  DATA : wwwdata_item LIKE wwwdatatab,
+         rc           TYPE i.
+
+  gv_file = 'C:\BOM Maintence.xls'.
+  PERFORM get_file USING 'S' gv_file.
+
+  IF sy-subrc &lt;&gt; 0 OR gv_file IS INITIAL.
+    "MESSAGE S001 WITH 'Cancel Template Download File!'.
+    MESSAGE s001 WITH TEXT-m01.
+    EXIT.
+  ENDIF.
+
+    SELECT SINGLE *
+    INTO CORRESPONDING FIELDS OF wwwdata_item
+    FROM wwwdata
+   WHERE objid = 'ZPPG0020_03'.
+
+  CALL FUNCTION 'DOWNLOAD_WEB_OBJECT'
+    EXPORTING
+      key         = wwwdata_item
+      destination = gv_file.
+
+ENDFORM.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750
+</font>
+</body>
+</html>
