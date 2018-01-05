@@ -23,3 +23,12 @@ ABAP21_tabstrip practice : ZEDR22_27<br>
 ABAP22_데이터 나눠서 출력하기 : ZEDR22_28<br>
 ABAP23_최종과제(검색조건, 탭, 저장) : ZEDR22_29<br>
 ABAP24_Gateway practice : ZEDR22_30<br>
+ABAP25_ALV 수행평가 : ZEDR22_34<br>
+ABAP26_Backflush : ZPPG0150_22<br>
+ABAP27_BAPI : ZPPG0320_22<br>
+ABAP28_RFC : ZRFC_22<br>
+ABAP29_BOM Mess maintence Program : ZPPG0020_ZM4<br>
+ABAP30_Routing Creating Program : ZPPG0030_ZM4<br>
+ABAP31_Production Version Mainternance : ZPPG0040_ZM4<br>
+ABAP32_Material Master Maintence Program : ZPPG0320_ZM4<br>
+ABAP33_Weekly Production Planning : ZPPR0541_ZM4<br>
