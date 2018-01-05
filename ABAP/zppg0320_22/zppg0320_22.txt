@@ -1,0 +1,55 @@
+*&---------------------------------------------------------------------*
+*& Report  ZPPG0320_22
+*&
+*&---------------------------------------------------------------------*
+*&
+*&
+*&---------------------------------------------------------------------*
+REPORT zppg0320_22 MESSAGE-ID zppgm.
+
+INCLUDE zppg0320_22_top                         .    " global Data
+
+INCLUDE zppg0320_22_o01                         .  " PBO-Modules
+INCLUDE zppg0320_22_i01                         .  " PAI-Modules
+INCLUDE zppg0320_22_f01                         .  " FORM-Routines
+
+
+
+INITIALIZATION.
+  PERFORM do_init.
+
+START-OF-SELECTION.
+  PERFORM get_data_screen200.
+  PERFORM upload_data.
+  PERFORM MODIFY_GT_DATA.
+
+  IF gt_data[] IS INITIAL.
+    MESSAGE s001 WITH 'DATA NOT FOUND' DISPLAY LIKE 'E'.
+  ELSE.
+    CALL SCREEN '0100'.
+  ENDIF.
+
+*GUI Texts
+*----------------------------------------------------------
+* T0100 --> Create Material Master
+* T0200 --> FIELD INFO
+
+*Text elements
+*----------------------------------------------------------
+* F01 Template Download
+* F02 View And Field
+
+
+*Selection texts
+*----------------------------------------------------------
+* P_PATHS D       .
+
+
+*Messages
+*----------------------------------------------------------
+*
+* Message class: ZPPGM
+*001
+
+----------------------------------------------------------------------------------
+Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750

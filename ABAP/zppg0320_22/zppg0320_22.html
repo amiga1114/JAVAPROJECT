@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZPPG0320_22</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZPPG0320_22</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  자재마스터 등록(BAPI)</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report  ZPPG0320_22</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT zppg0320_22 MESSAGE-ID zppgm.
+
+include <a href ="zppg0320_22_top.html">zppg0320_22_top</a>.    " global Data
+
+include <a href ="zppg0320_22_o01.html">zppg0320_22_o01</a>.  " PBO-Modules
+include <a href ="zppg0320_22_i01.html">zppg0320_22_i01</a>.  " PAI-Modules
+include <a href ="zppg0320_22_f01.html">zppg0320_22_f01</a>.  " FORM-Routines
+
+
+
+INITIALIZATION.
+  PERFORM do_init.
+
+START-OF-SELECTION.
+  PERFORM get_data_screen200.
+  PERFORM upload_data.
+  PERFORM MODIFY_GT_DATA.
+
+  IF gt_data[] IS INITIAL.
+    MESSAGE s001 WITH 'DATA NOT FOUND' DISPLAY LIKE 'E'.
+  ELSE.
+    CALL SCREEN '0100'.
+  ENDIF.
+
+<font color ="#0000FF">*GUI Texts</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* T0100 --&gt; Create Material Master</font>
+<font color ="#0000FF">* T0200 --&gt; FIELD INFO</font>
+
+<font color ="#0000FF">*Text elements</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* F01 Template Download</font>
+<font color ="#0000FF">* F02 View And Field</font>
+
+
+<font color ="#0000FF">*Selection texts</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* P_PATHS D       .</font>
+
+
+<font color ="#0000FF">*Messages</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">* Message class: ZPPGM</font>
+<font color ="#0000FF">*001</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750
+</font>
+</body>
+</html>

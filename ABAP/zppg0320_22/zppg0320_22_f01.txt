@@ -1,0 +1,549 @@
+*&---------------------------------------------------------------------*
+*&  Include           ZPPG0320_22_F01
+*&---------------------------------------------------------------------*
+*&---------------------------------------------------------------------*
+*&      Form  GET_FILE
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      -->P_0039   text
+*      -->P_P_PATHS  text
+*----------------------------------------------------------------------*
+FORM get_file  USING p_mode px_fname.
+
+  CALL FUNCTION 'WS_FILENAME_GET'
+    EXPORTING
+      def_filename     = px_fname
+      def_path         = 'C:\'
+      mask             = ',*.*,*.*. '
+      mode             = p_mode
+    IMPORTING
+      filename         = px_fname
+    EXCEPTIONS
+      inv_winsys       = 1
+      no_batch         = 2
+      selection_cancel = 3
+      selection_error  = 4
+      OTHERS           = 5.
+
+ENDFORM.                    " GET_FILE
+*&---------------------------------------------------------------------*
+*&      Form  DO_INIT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM do_init .
+  DATA: ls_functxt TYPE smp_dyntxt.
+  CLEAR ls_functxt.
+
+  ls_functxt-icon_id    = icon_xls.
+  ls_functxt-icon_text  = ls_functxt-quickinfo  = TEXT-f01.
+  sscrfields-functxt_01 = ls_functxt.
+  CLEAR ls_functxt.
+  ls_functxt-icon_id    = icon_select_detail.
+  ls_functxt-icon_text  = ls_functxt-quickinfo  = TEXT-f02.
+  sscrfields-functxt_02 = ls_functxt.
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  DOWNLOAD_TEMPLETE
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM download_templete .
+  DATA : wwwdata_item LIKE wwwdatatab,
+         rc           TYPE i.
+
+
+  gv_file = 'C:\Material_Template.xls'.
+  PERFORM get_file USING 'S' gv_file.
+
+  IF sy-subrc <> 0 OR gv_file IS INITIAL.
+    "MESSAGE S001 WITH 'Cancel Template Download File!'.
+    MESSAGE s001 WITH TEXT-m01.
+    EXIT.
+  ENDIF.
+
+
+*-- cash 지우는것.
+  CALL FUNCTION 'WS_FILE_DELETE'
+    EXPORTING
+      file   = gv_file
+    IMPORTING
+      return = rc.
+
+  IF rc = 0 OR rc = 1.
+  ELSE.
+*    MESSAGE S001 WITH 'Fail Delete File!'.
+    MESSAGE s001 WITH TEXT-m02.
+    EXIT.
+  ENDIF.
+
+  SELECT SINGLE *
+    INTO CORRESPONDING FIELDS OF wwwdata_item
+    FROM wwwdata
+   WHERE objid = 'ZPPG0320_22'.
+
+  CALL FUNCTION 'DOWNLOAD_WEB_OBJECT'
+    EXPORTING
+      key         = wwwdata_item
+      destination = gv_file.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  UPLOAD_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM upload_data .
+  CALL FUNCTION 'ALSM_EXCEL_TO_INTERNAL_TABLE'
+    EXPORTING
+      filename                = p_paths
+      i_begin_col             = 1
+      i_begin_row             = 3
+*넉넉하게 지정해줌.
+      i_end_col               = 88
+      i_end_row               = 65000
+    TABLES
+      intern                  = gt_xstb
+    EXCEPTIONS
+      inconsistent_parameters = 1
+      upload_ole              = 2
+      OTHERS                  = 3.
+  .
+  LOOP AT gt_xstb.
+    ASSIGN COMPONENT gt_xstb-col OF STRUCTURE gt_xlsx TO <fs>.
+
+    MOVE gt_xstb-value TO <fs>.
+
+    AT END OF row.
+      APPEND gt_xlsx.
+      CLEAR gt_xlsx.
+    ENDAT.
+  ENDLOOP.
+
+*-- gt_xlsx => gt_data로 데이터 복사
+  LOOP AT gt_xlsx.
+    MOVE-CORRESPONDING gt_xlsx TO gt_data.
+
+*    gt_data-stats = '@EB@'.
+    gt_data-stats = icon_yellow_light.
+
+    APPEND gt_data.
+    CLEAR : gt_data, gt_xlsx.
+  ENDLOOP.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  INIT_ALV_0100
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM init_alv_0100 .
+
+  IF go_doc_cont IS NOT BOUND.
+*-- CONTAINER, CL_GUI_ALV_GRID 오브젝트 생성
+    PERFORM create_container.
+
+    PERFORM set_layout.
+*
+    PERFORM set_field_catalog.
+*
+    PERFORM display_grid.
+
+  ELSE.
+    PERFORM refresh_grid.
+  ENDIF.
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  CREATE_CONTAINER
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM create_container .
+
+  IF go_doc_cont IS INITIAL.
+
+    CREATE OBJECT go_doc_cont
+      EXPORTING
+*       side      = 1
+        side      = go_doc_cont->dock_at_left
+        extension = 3000.
+
+    CREATE OBJECT go_grid
+      EXPORTING
+        i_parent = go_doc_cont.
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  DISPLAY_GRID
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM display_grid .
+  CALL METHOD go_grid->set_table_for_first_display
+    EXPORTING
+*     is_variant                    =
+*     i_save                        =
+*     i_default                     = 'X'
+      is_layout                     = gs_layo
+    CHANGING
+      it_outtab                     = gt_data[]
+      it_fieldcatalog               = gt_fcat
+*     it_sort                       =
+    EXCEPTIONS
+      invalid_parameter_combination = 1
+      program_error                 = 2
+      too_many_lines                = 3
+      OTHERS                        = 4.
+*  IF sy-subrc <> 0.
+** Implement suitable error handling here
+*  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_LAYOUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM set_layout .
+  gs_layo-zebra = 'X'.
+  gs_layo-cwidth_opt = 'X'.
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_FIELD_CATALOG
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM set_field_catalog .
+
+  PERFORM set_field USING : 'X'    'STATS'         'Signal',
+                            'X'    'REMSG'         'Return MSG',
+                            'X'    'MATNR'         'Material',
+                            ' '    'MAKTX'         'Material Description',
+                            ' '    'MTART'         'Material Type',
+                            ' '    'WERKS'         'Plant',
+                            ' '    'LGORT'         'Storage Location',
+                            ' '    'MEINS'         'Base Unit of Measure',
+                            ' '    'MATKL'         'Material Group',
+                            ' '    'SPART'         'Division',
+                            ' '    'BISMT'         'Old Material Number',
+                            ' '    'MTPOS_MARA'    'GenItemCatGroup',
+                            ' '    'NMATNR'        'Naked Part No',
+                            ' '    'BRGEW'         'Gross Weight',
+                            ' '    'NTGEW'         'Net Weight',
+                            ' '    'GEWEI'         'Weight unit',
+                            ' '    'TRAGR'         'Trans. Grp',
+                            ' '    'RAUBE'         'Storage Conditions',
+                            ' '    'QMPUR'         'QM proc. active',
+                            ' '    'KLART'         'Class Type',
+                            ' '    'CLASS'         'Class',
+                            ' '    'MTVFP'         'Availability check',
+                            ' '    'LADGR'         'LoadingGrp',
+                            ' '    'EKGRP'         'Purchasing Group',
+                            ' '    'USEQU'         'Quota arr. Usage',
+                            ' '    'XCHPF'         'Batch Management',
+                            ' '    'KORDB'         'Source List',
+                            ' '    'DISGR'         'MRP Group',
+                            ' '    'DISMM'         'MRP Type',
+                            ' '    'DISPO'         'MRP Controller',
+                            ' '    'LGFSB'         'Storage loc. for EP',
+                            ' '    'DISLS'         'Lot size',
+                            ' '    'BESKZ'         'Procurement type',
+                            ' '    'SOBSL'         'Special procurement',
+                            ' '    'FHORI'         'SchedMargin key',
+                            ' '    'SFEPR'         'REM profile',
+                            ' '    'STRGR'         'Strategy group',
+                            ' '    'ALTSL'         'Selectin method',
+                            ' '    'SAUFT'         'Repetitive mfg(REM)',
+                            ' '    'SBDKZ'         'Individual/coll.',
+                            ' '    'PRCTR'         'Profit Center',
+                            ' '    'ZMMMATDDC'     'Warehouse Person',
+                            ' '    'BOXCODE'       'Delivery Box',
+                            ' '    'ENDIND'        'End Item Indicator',
+                            ' '    'SSQSS'         'QM Control Key',
+                            ' '    'QZGTP'         'Certificate Type',
+                            ' '    'NCOST'         'Do Not Cost',
+                            ' '    'DWERK'         'Delivering Plant',
+                            ' '    'VRKME'         'Sales unit',
+                            ' '    'PRCTR'         'Profit Center',
+                            ' '    'KONDM'         'Material pricing grp',
+                            ' '    'KTGRM'         'Acct assignment grp',
+                            ' '    'MTPOS'         'Item category group',
+                            ' '    'MVGR1'         'Material group 1',
+                            ' '    'MVGR2'         'Material group 2',
+                            ' '    'MVGR3'         'Material group 3',
+                            ' '    'MVGR4'         'Material group 4',
+                            ' '    'MVGR5'         'Material group 5',
+                            ' '    'ALAND'         'Country',
+                            ' '    'TAXM1'         'TAX Classicfication',
+                            ' '    'LGPBE'         'Storage Bin',
+                            ' '    'ART'           'Inspection Type',
+                            ' '    'AKTIV'         'Mat Comb is Active',
+                            ' '    'BKLAS'         'Valuation Class',
+                            ' '    'HKMAT'         'Material Origin',
+                            ' '    'MLAST'         'Price Determ',
+                            ' '    'LGPRO'         'PProd. stor. Location',
+                            ' '    'VALUE_CHAR'    'VALUE_CHAR',
+                            ' '    'BASIC_VIEW'    'BASIC_VIEW'.
+
+
+
+*  gs_fcat-key = 'X'.
+*  gs_fcat-fieldname = 'STATS'.
+*  gs_fcat-coltext = 'Signal'.
+*  gs_fcat-icon = 'X'.
+*  APPEND gs_fcat TO gt_fcat.
+*  CLEAR gs_fcat.
+
+*  gs_fcat-key = 'X'.
+*  gs_fcat-fieldname = 'REMSG'.
+*  gs_fcat-coltext = 'Return MSG'.
+*  APPEND gs_fcat TO gt_fcat.
+*  CLEAR gs_fcat.
+*
+*  gs_fcat-key = 'X'.
+*  gs_fcat-fieldname = 'MATNR'.
+**GS_FCAT-REF_TABLE = ''.
+**GS_FCAT-REF_FIELD = ''.
+*  gs_fcat-coltext = 'Material'.
+*  APPEND gs_fcat TO gt_fcat.
+*  CLEAR gs_fcat.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_FIELD
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      -->P_0317   text
+*      -->P_0318   text
+*      -->P_0319   text
+*----------------------------------------------------------------------*
+FORM set_field  USING    VALUE(p_key)
+                         VALUE(p_fieldnm)
+                         VALUE(p_text).
+
+  gs_fcat-key = p_key.
+  gs_fcat-fieldname = p_fieldnm.
+  gs_fcat-coltext = p_text.
+
+  CASE  p_fieldnm.
+    WHEN 'STATS'.
+      gs_fcat-icon = 'X'.
+  ENDCASE.
+
+  APPEND gs_fcat TO gt_fcat.
+  CLEAR gs_fcat.
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SAVE_DATA_ZPPG032022T
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM save_data_zppg032022t .
+
+  DATA : ls_0320 TYPE zppg032022t.
+
+  MOVE-CORRESPONDING gt_i TO ls_0320.
+  ls_0320-mtart = gv_mtart.
+  ls_0320-werks = gv_werks.
+
+  MODIFY zppg032022t FROM ls_0320.
+
+  IF sy-subrc = 0.
+    PERFORM init_200_dyn.
+  ELSE.
+    MESSAGE s001 WITH 'Failed data saved' DISPLAY LIKE 'E'.
+  ENDIF.
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_DATA_ZPPG032000T
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM get_data_zppg032000t .
+  SELECT SINGLE *
+    INTO CORRESPONDING FIELDS OF gt_i
+    FROM zppg032022t
+    WHERE mtart = gv_mtart
+      AND werks = gv_werks.
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  INIT_200_DYN
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM init_200_dyn .
+  CLEAR : gv_mtart, gv_werks, gt_i.
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_DATA_SCREEN200
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM get_data_screen200 .
+
+  SELECT *
+    INTO CORRESPONDING FIELDS OF TABLE gt_0320t
+    FROM zppg032022t
+  ORDER BY mtart werks. "DB에서 정렬
+*SORT GT_0320T BY MTART WERKS. " SAP AP SERVER에서
+
+*    BREAK-POINT.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  MODIFY_GT_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM modify_gt_data .
+  LOOP AT gt_data.
+    READ TABLE gt_0320t INTO gs_0320t
+                        WITH KEY mtart = gt_data-mtart
+                                 werks = gt_data-werks
+                                 BINARY SEARCH.
+    IF sy-subrc = 0.
+*      gt_data-mtpos_mara = gs_0320t-mtpos_mara.
+      MOVE-CORRESPONDING gs_0320t TO gt_data. "어떠한 값이라도 GT_DATA로 이동함.
+*GT_DATA- = GS_0320T-. : 찾은걸 넣어라.
+    ENDIF.
+
+    "HEADER의 내용을 BODY로 수정
+    MODIFY gt_data.
+    CLEAR : gs_0320t, gt_data.
+*    MODIFY GT_DATA TRANSPORTING MTPOS_MARA.
+
+  ENDLOOP.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  CREATE_MATERIAL_BY_BAPI
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM create_material_by_bapi .
+
+  DATA : ls_headdata    TYPE bapimathead,
+         ls_clientdata  TYPE bapi_mara,
+         ls_clientdatax TYPE bapi_marax.
+
+  DATA : lt_desc        TYPE TABLE OF bapi_makt WITH HEADER LINE.
+
+  DATA : ls_return      TYPE bapiret2.
+
+  LOOP AT gt_data.
+
+    "HEADER
+    ls_headdata-material = gt_data-matnr.
+    ls_headdata-ind_sector = 'M'.
+    ls_headdata-matl_type = gt_data-mtart.
+    ls_headdata-basic_view = gt_data-basic_view.
+
+    "CLIENTDATA
+    ls_clientdata-base_uom = gt_data-meins.
+    ls_clientdatax-base_uom = 'X'.
+
+    "자재명
+    lt_desc-langu = 'E'.
+    lt_desc-matl_desc = gt_data-maktx.
+    APPEND lt_desc.
+
+    CALL FUNCTION 'BAPI_MATERIAL_SAVEDATA'
+      EXPORTING
+        headdata            = ls_headdata
+        clientdata          = ls_clientdata
+        clientdatax         = ls_clientdatax
+      IMPORTING
+        return              = ls_return
+      TABLES
+        materialdescription = lt_desc[].
+
+    IF ls_return-type EQ 'S'.
+      CALL FUNCTION 'BAPI_TRANSACTION_COMMIT'
+        EXPORTING
+          wait = 'X'.
+
+
+      gt_data-stats = icon_green_light.
+    ELSE.
+      CALL FUNCTION 'BAPI_TRANSACTION_ROLLBACK'.
+
+
+      gt_data-stats = icon_red_light.
+      gt_data-remsg = ls_return-message.
+    ENDIF.
+
+    CLEAR : ls_headdata, ls_clientdata, ls_clientdatax, ls_return,
+            lt_desc, lt_desc[].
+
+    MODIFY gt_data TRANSPORTING stats remsg.
+  ENDLOOP.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  REFRESH_GRID
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM refresh_grid .
+  CALL METHOD go_grid->refresh_table_display
+*  EXPORTING
+*    is_stable      =
+*    i_soft_refresh =
+*  EXCEPTIONS
+*    finished       = 1
+*    others         = 2
+    .
+
+
+ENDFORM.
+
+----------------------------------------------------------------------------------
+Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750
