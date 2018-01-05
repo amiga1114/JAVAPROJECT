@@ -1,0 +1,143 @@
+
+REPORT ZPPG_ROUT_03 MESSAGE-ID ZPPGM.
+
+*----------------------------------------------------------------------*
+* Table
+*----------------------------------------------------------------------*
+TABLES:MARA, MARC, MAKT, MKAL, MAPL, PLKO, PLPO, CRHD.
+
+*----------------------------------------------------------------------*
+* Type
+*----------------------------------------------------------------------*
+TYPES : BEGIN OF GY_SEARCH,
+          WERKS TYPE WERKS_D,
+          MATNR TYPE MATNR,
+          ARBPL TYPE ARBPL,
+
+        END OF GY_SEARCH.
+
+*----------------------------------------------------------------------*
+* Constants
+*----------------------------------------------------------------------*
+* --> begin of 2014.09.28 EDU08 - ������#�����ᡰMIN�� --
+CONSTANTS: C_VGE00 LIKE PLPO-VGE01 VALUE ''.
+* <-- end of 2014.09.28 EDU08 --
+*CONSTANTS: C_LAR01 LIKE PLPO-LAR01 VALUE 'ACT01'.
+*CONSTANTS: C_LAR02 LIKE PLPO-LAR01 VALUE 'ACT02'.
+*CONSTANTS: C_LAR03 LIKE PLPO-LAR01 VALUE 'ACT03'.
+*CONSTANTS: C_LAR04 LIKE PLPO-LAR01 VALUE 'ACT04'.
+*CONSTANTS: C_LAR05 LIKE PLPO-LAR01 VALUE 'ACT05'.
+*CONSTANTS: C_LAR06 LIKE PLPO-LAR01 VALUE 'ACT08'. " 서버에 세팅이 안 되어 있음.
+
+*----------------------------------------------------------------------*
+* ��������
+*----------------------------------------------------------------------*
+DATA: GV_OKCODE  LIKE SY-UCOMM,
+      GV_UCOM    LIKE SY-UCOMM.
+*      gv_okcode TYPE sy-ucomm.
+DATA: GV_MATNR      TYPE MATNR,
+      GV_INDEX_NOW  TYPE I,
+      GV_INDEX_LAST TYPE I,
+      GV_BODY_FLAG  TYPE N,  "������ �����ÿ��� ����
+      GV_ERROR(8)      TYPE N, " ���аǼ�
+      GV_OK(8)         TYPE N, " �����Ǽ�
+      GV_COUNT(8)      TYPE N.   "���ͳ����̺� �����ͰǼ�
+DATA: GV_BAPI_DONE.      "���� ����
+DATA: GV_ALLO_COUNTER(4) TYPE N. "������������
+DATA: GV_MESSAGE TYPE CHAR258.
+DATA: GV_LOSVN(13),"BDC������ �ּҷ�Ʈũ��
+      GV_LOSBS(13)."BDC������ �ִ���Ʈũ��
+DATA: GV_EXCEL_SUCCESS      LIKE SY-TABIX,
+      GV_EXCEL_FAIL         TYPE SY-TABIX,
+      GV_EXCEL_TOTAL        TYPE SY-TABIX,
+      GV_PROCESSING_SUCCESS TYPE SY-TABIX,
+      GV_PROCESSING_FAIL    TYPE SY-TABIX,
+      GV_PROCESSING_TOTAL   TYPE SY-TABIX.
+*----------------------------------------------------------------------*
+* IT & STRUCTURE
+*----------------------------------------------------------------------*
+DATA :  BEGIN OF GT_ROUTING_EXCEL OCCURS 0,
+          XLSID TYPE I, " Excel����# Added by EDU08 PP##�������� on 2014-08-27 --
+          MATNR(18),  "Material
+          WERKS(4),   "Plant
+          STTAG(8),   "Key date
+          PLNNR(8),   "Group
+          PLNAL(2),   "Group Counter
+          KTEXT(40),  "Task list description
+          VERWE(4),   "Usage
+          STATU(10),  "Status
+          LOSVN(16),  "From Lot Size
+          LOSBS(16),  "To Lot Size
+          VORNR(4),   "Operation/Activity Number
+          ARBPL(8),   "Work Center
+          STEUS(4),   "Control key
+          KTSCH(7),   "Standard text key
+          LTXA1(40),  "Operation Description
+          BMSCH(13),  "Base Quantity
+          VGW01(9),   "standard value 1
+          VGW02(9),   "standard value
+          VGW03(9),   "standard value
+          VGW04(9),   "standard value 1
+          VGW05(9),   "standard value
+          VGW06(9),   "standard value
+
+END OF GT_ROUTING_EXCEL.
+
+DATA: BEGIN OF GT_DATA OCCURS 0.
+        INCLUDE STRUCTURE GT_ROUTING_EXCEL.
+DATA:
+          MAKTX(40),  "Material description
+          MTART(4),   "Material type
+          GMEIN(3),   "UNIT
+          VGE01(3),   "Unit
+          LAR01(6),   "��Ƽ��Ƽ����
+          VGE02(3),   "Unit
+          LAR02(6),   "Activity Type
+          VGE03(3),   "Unit
+          LAR03(6),   "Activity Type
+          VGE04(3),   "Unit
+          LAR04(6),   "Activity Type
+          VGE05(3),   "Unit
+          LAR05(6),   "Activity Type
+          VGE06(3),   "Unit
+          LAR06(6),   "Activity Type
+          CHECK(4) TYPE C,
+          ICON(4),"Yellow : Excel Success  Green : Processing Success
+          CELLTAB  TYPE LVC_T_STYL,
+          INDEX TYPE I,  " Alv��#���� Added by EDU08 PP##�������� on 2014-08-22 --
+          MSG(225).
+DATA: END OF GT_DATA.
+
+*--------->  ROUTING BAPI �� ���� ����.
+DATA :
+GV_GROUP                  TYPE  BAPI1012_TSK_C-TASK_LIST_GROUP,
+GV_GROUPCOUNTER           TYPE  BAPI1012_TSK_C-GROUP_COUNTER,
+GT_TASK                   LIKE BAPI1012_TSK_C OCCURS 0 WITH HEADER LINE,
+GT_MATERIALTASKALLOCATION LIKE BAPI1012_MTK_C OCCURS 0 WITH HEADER LINE,
+GT_OPERATION              LIKE BAPI1012_OPR_C OCCURS 0 WITH HEADER LINE,
+GT_COMPONENTALLOCATION    LIKE BAPI1012_COM_C OCCURS 0 WITH HEADER LINE,
+GT_RETURN                 LIKE BAPIRET2 OCCURS 0 WITH HEADER LINE,
+GT_RETURN_EXT             LIKE BAPIRET2 OCCURS 0 WITH HEADER LINE,
+GV_TASK_LIST_GROUP        LIKE BAPI1012_MTK_C-TASK_LIST_GROUP.
+
+* ������ ���� �Ҷ�  �� BDC ����Ÿ
+"BDC
+DATA :GT_BDCDATA LIKE BDCDATA    OCCURS 0 WITH HEADER LINE,
+      GT_MESSTAB LIKE BDCMSGCOLL OCCURS 0 WITH HEADER LINE,
+      GV_MSEG    LIKE SY-MSGV1,
+      GV_LINE    TYPE I,
+      GV_OPT     LIKE CTU_PARAMS.
+
+
+*----------------------------------------------------------------------*
+* SELECTION-SCREEN
+*----------------------------------------------------------------------*
+SELECTION-SCREEN BEGIN OF BLOCK B1 WITH FRAME TITLE TEXT-S01.
+PARAMETERS : P_FNAME TYPE RLGRAP-FILENAME
+             OBLIGATORY DEFAULT 'C:\'.
+SELECTION-SCREEN END OF BLOCK B1.
+
+SELECTION-SCREEN FUNCTION KEY 1.
+
+----------------------------------------------------------------------------------
+Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750
