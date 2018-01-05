@@ -18,3 +18,6 @@ ABAP16_자재전표조회-더블클릭  : ZEDR22_15<br>
 ABAP17_자재코드조회-더블클릭  : ZEDR22_16<br>
 ABAP18_자재전표데이터가져오기  : ZEDR22_18<br>
 ABAP19_자재및플랜트별 검사유형 조회 : ZEDR22_19<br>
+ABAP20_standard & CBO : ZEDR22_21<br>
+ABAP21_tabstrip practice : ZEDR22_27<br>
+
