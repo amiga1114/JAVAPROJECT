@@ -22,3 +22,4 @@ ABAP20_standard & CBO : ZEDR22_21<br>
 ABAP21_tabstrip practice : ZEDR22_27<br>
 ABAP22_데이터 나눠서 출력하기 : ZEDR22_28<br>
 ABAP23_최종과제(검색조건, 탭, 저장) : ZEDR22_29<br>
+ABAP24_Gateway practice : ZEDR22_30<br>
