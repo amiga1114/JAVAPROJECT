@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZRFC_22</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZRFC_22</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Program ZRFC_22</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZRFC_22</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT zrfc_22.
+
+DATA : gt_0150st    TYPE TABLE OF zppg0150st,
+       lv_result(1),
+       lv_msg(100).
+
+<font color ="#0000FF">*-- RFC로 호출할 데이터 조회(ZPPG0150ST)</font>
+SELECT *
+  INTO CORRESPONDING FIELDS OF TABLE gt_0150st
+  FROM zppg0150st.
+
+<font color ="#0000FF">*-- RFC 호출 : ZRFC_IF_MES_22</font>
+CALL FUNCTION 'ZRFC_IF_MES_22'
+  IMPORTING
+    o_result = lv_result
+    o_msg    = lv_msg
+  TABLES
+    it_tab   = gt_0150st.
+
+
+<font color ="#0000FF">*-- RFC 호출 결과 출력(O_RESULT, o_MSG)</font>
+
+WRITE :/ 'Result :', lv_result.
+WRITE :/ 'MSG :', lv_msg.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750
+</font>
+</body>
+</html>

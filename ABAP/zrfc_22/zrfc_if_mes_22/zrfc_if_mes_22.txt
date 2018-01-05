@@ -1,0 +1,34 @@
+FUNCTION zrfc_if_mes_22.
+*"----------------------------------------------------------------------
+*"*"Local Interface:
+*"  EXPORTING
+*"     VALUE(O_RESULT) TYPE  CHAR1
+*"     VALUE(O_MSG) TYPE  CHAR100
+*"  TABLES
+*"      IT_TAB STRUCTURE  ZPPG0150ST
+*"----------------------------------------------------------------------
+
+  DATA : lt_015t TYPE TABLE OF zppg0150t WITH HEADER LINE.
+
+  LOOP AT it_tab.
+    MOVE-CORRESPONDING it_tab TO lt_015t.
+    lt_015t-userid = sy-uname.
+
+    APPEND lt_015t.
+
+    CLEAR : lt_015t, it_tab.
+  ENDLOOP.
+
+  MODIFY zppg0150t FROM TABLE lt_015t.
+  IF sy-subrc = 0.
+    o_result = 'S'.
+  ELSE.
+    o_result = 'E'.
+    o_msg = 'insert error'.
+  ENDIF.
+
+
+ENDFUNCTION.
+
+----------------------------------------------------------------------------------
+Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750
