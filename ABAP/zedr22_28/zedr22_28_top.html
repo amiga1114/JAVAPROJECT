@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZEDR22_28_TOP</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZEDR22_28_TOP</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZEDR22_28_TOP</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include ZEDR22_28_TOP                                     Report ZEDR22_28</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT zedr22_28.
+
+DATA : lv_str(1000) VALUE 'AAA,BBB,CCC,DDD'.
+
+"DATA를 쪼개서 담는 방법1
+
+<font color ="#0000FF">*DATA : LV_STR1(10),</font>
+<font color ="#0000FF">*       LV_STR2(10),</font>
+<font color ="#0000FF">*       LV_STR3(10),</font>
+<font color ="#0000FF">*       LV_STR4(10).</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*SPLIT LV_STR AT ',' INTO LV_STR1 LV_STR2 LV_STR3 LV_STR4.</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">*WRITE : LV_STR1, LV_STR2, LV_STR3, LV_STR4.</font>
+
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+"DATA를 쪼개서 담는 방법2
+
+DATA : BEGIN OF lt_str OCCURS 0,
+         str(10),
+       END OF lt_str.
+
+SPLIT lv_str AT ',' INTO TABLE lt_str.
+
+LOOP AT lt_str.
+  WRITE : lt_str-str,/.
+ENDLOOP.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750
+</font>
+</body>
+</html>

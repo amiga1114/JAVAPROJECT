@@ -1,0 +1,35 @@
+*&---------------------------------------------------------------------*
+*& Include ZEDR22_28_TOP                                     Report ZEDR22_28
+*&
+*&---------------------------------------------------------------------*
+REPORT zedr22_28.
+
+DATA : lv_str(1000) VALUE 'AAA,BBB,CCC,DDD'.
+
+"DATA를 쪼개서 담는 방법1
+
+*DATA : LV_STR1(10),
+*       LV_STR2(10),
+*       LV_STR3(10),
+*       LV_STR4(10).
+*
+*SPLIT LV_STR AT ',' INTO LV_STR1 LV_STR2 LV_STR3 LV_STR4.
+*
+*WRITE : LV_STR1, LV_STR2, LV_STR3, LV_STR4.
+
+*&---------------------------------------------------------------------*
+
+"DATA를 쪼개서 담는 방법2
+
+DATA : BEGIN OF lt_str OCCURS 0,
+         str(10),
+       END OF lt_str.
+
+SPLIT lv_str AT ',' INTO TABLE lt_str.
+
+LOOP AT lt_str.
+  WRITE : lt_str-str,/.
+ENDLOOP.
+
+----------------------------------------------------------------------------------
+Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 750
